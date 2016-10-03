@@ -4,10 +4,10 @@
 
 This repository will track the development of a rudimentary multi-site blog platform, in parallel, in 4 different
 environments:
-- ASP.NET Core MVC / C#
-- Nancy / C#
-- Nancy / F#
-- Freya / F#
+1. ASP.NET Core MVC / C#
+2. Nancy / C#
+3. Nancy / F#
+4. Freya / F#
 
 The goal is to be able to start any of the four solutions, and be able to use the same data store and have the behavior
 of each site work the same.  All four will use RethinkDB to persist the data (and, where required, for session storage
@@ -32,14 +32,14 @@ _This learning is not my primary occupation, so the pace may be slow; my hope is
 ## The Steps
 
 My plan for the steps in building the application are:
-- Hello World
-- Data model
-- RethinkDB connection
-- Framework setup
-- Routes
-- Views
-- Log in
-- Page publishing and editing
-- Post publishing and editing
-- Categories and tags
-- RSS feeds
+1. Hello World
+2. Data model
+3. RethinkDB connection
+4. Framework setup
+5. Routes
+6. Views
+7. Log in
+8. Page publishing and editing
+9. Post publishing and editing
+10. Categories and tags
+11. RSS feeds
