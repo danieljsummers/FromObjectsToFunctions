@@ -1,5 +1,4 @@
-﻿// Learn more about F# at http://fsharp.org
-namespace Tres
+﻿namespace Tres
 
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting

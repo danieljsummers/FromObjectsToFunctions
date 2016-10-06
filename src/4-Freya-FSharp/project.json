@@ -12,7 +12,8 @@
   "dependencies": {
     "Freya": "3.0.0-rc01",
     "Microsoft.AspNetCore.Owin": "1.0.0",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0"
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
   },
   "frameworks": {
     "netcoreapp1.0": {
@@ -22,7 +23,13 @@
           "version": "1.0.1"
         },
         "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-160831"
-      }
+      },
+      "imports": [
+        "portable-net45+win8+dnxcore50",
+        "portable-net45+win8",
+        "net452",
+        "dnxcore50"
+      ]
     }
   },
   "tools": {
