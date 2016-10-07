@@ -5,6 +5,7 @@
     "compilerName": "fsc",
     "compile": {
       "includeFiles": [
+        "Entities.fs",
         "HomeModule.fs",
         "App.fs"
       ]
@@ -13,7 +14,8 @@
   "dependencies": {
     "Microsoft.AspNetCore.Owin": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
-    "Nancy": "2.0.0-barneyrubble"
+    "Nancy": "2.0.0-barneyrubble",
+    "Newtonsoft.Json": "9.0.1"
   },
   "frameworks": {
     "netcoreapp1.0": {

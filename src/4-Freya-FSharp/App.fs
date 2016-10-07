@@ -24,7 +24,7 @@ module App =
 
   type Startup () =
     member __.Configure (app : IApplicationBuilder) =
-      let freyaOwin = OwinMidFunc.ofFreya (UriTemplateRouter.Freya router)
+      let freyaOwin = OwinMidFunc.ofFreya router
       app.UseOwin (fun p -> p.Invoke freyaOwin) |> ignore
 
   [<EntryPoint>]
