@@ -171,7 +171,6 @@ type Post = {
   Text : string
   CategoryIds : string list
   Tags : string list
-  PriorPermalinks : string list
   Revisions : Revision list
   }
 with
@@ -187,6 +186,5 @@ with
       Text            = ""
       CategoryIds     = []
       Tags            = []
-      PriorPermalinks = []
       Revisions       = []
       }

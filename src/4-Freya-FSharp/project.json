@@ -5,6 +5,7 @@
     "compilerName": "fsc",
     "compile": {
       "includeFiles": [
+        "Entities.fs",
         "App.fs"
       ]
     }
@@ -13,7 +14,8 @@
     "Freya": "3.0.0-rc01",
     "Microsoft.AspNetCore.Owin": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
-    "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
+    "Newtonsoft.Json": "9.0.1"
   },
   "frameworks": {
     "netcoreapp1.0": {
