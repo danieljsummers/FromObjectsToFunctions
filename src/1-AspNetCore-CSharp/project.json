@@ -1,12 +1,19 @@
 {
   "buildOptions": {
     "debugType": "portable",
-    "emitEntryPoint": true
+    "emitEntryPoint": true,
+    "copyToOutput": {
+      "include": "appsettings.json"
+    }
   },
   "dependencies": {
     "Microsoft.AspNetCore.Owin": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
-    "Newtonsoft.Json": "9.0.1"
+    "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
+    "Newtonsoft.Json": "9.0.1",
+    "RethinkDb.Driver": "2.3.15"
   },
   "frameworks": {
     "netcoreapp1.0": {
