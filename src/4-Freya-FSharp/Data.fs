@@ -1,30 +1,33 @@
-namespace Tres
+namespace Quatro
 
-open Newtonsoft.Json
+open Chiron
 open RethinkDb.Driver
 open RethinkDb.Driver.Ast
 open RethinkDb.Driver.Net
 
-type DataConfig =
-  { Hostname : string
-    Port : int
-    AuthKey : string
-    Timeout : int
-    Database : string
-    }
+type ConfigParameter =
+  | Hostname of string
+  | Port     of int
+  | AuthKey  of string
+  | Timeout  of int
+  | Database of string
+
+type DataConfig = { Parameters : ConfigParameter list }
 with
   member this.CreateConnection () : IConnection =
+    let folder (builder : Connection.Builder) (block : ConfigParameter) =
+      match block with
+      | Hostname x -> builder.Hostname x
+      | Port x -> builder.Port x
+      | AuthKey x -> builder.AuthKey x
+      | Timeout x -> builder.Timeout x
+      | Database x -> builder.Db x
     let bldr =
-      seq<Connection.Builder -> Connection.Builder> {
-        yield fun builder -> match this.Hostname with null -> builder | host -> builder.Hostname host
-        yield fun builder -> match this.Port with 0 -> builder | port -> builder.Port port
-        yield fun builder -> match this.AuthKey with null -> builder | key -> builder.AuthKey key
-        yield fun builder -> match this.Database with null -> builder | db -> builder.Db db
-        yield fun builder -> match this.Timeout with 0 -> builder | timeout -> builder.Timeout timeout
-        }
-      |> Seq.fold (fun builder block -> block builder) (RethinkDB.R.Connection())
+      this.Parameters
+      |> Seq.fold folder (RethinkDB.R.Connection())
     upcast bldr.Connect()
-  static member FromJson json = JsonConvert.DeserializeObject<DataConfig> json
+  static member FromJson json =
+    Json.parse json
 
 
 [<RequireQualifiedAccess>]
