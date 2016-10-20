@@ -4,6 +4,7 @@ open Chiron
 open RethinkDb.Driver
 open RethinkDb.Driver.Ast
 open RethinkDb.Driver.Net
+open System
 
 type ConfigParameter =
   | Hostname of string
@@ -27,7 +28,23 @@ with
       |> Seq.fold folder (RethinkDB.R.Connection())
     upcast bldr.Connect()
   static member FromJson json =
-    Json.parse json
+    match Json.parse json with
+    | Object config ->
+        let options =
+          config
+          |> Map.toList
+          |> List.map (fun item ->
+              match item with
+              | "Hostname", String x -> Hostname x
+              | "Port", Number x -> Port <| int x
+              | "AuthKey", String x -> AuthKey x
+              | "Timeout", Number x -> Timeout <| int x
+              | "Database", String x -> Database x
+              | key, value ->
+                  raise <| InvalidOperationException
+                             (sprintf "Unrecognized RethinkDB configuration parameter %s (value %A)" key value))
+        { Parameters = options }
+    | _ -> { Parameters = [] }
 
 
 [<RequireQualifiedAccess>]
