@@ -1,0 +1,12 @@
+source https://nuget.org/api/v2
+
+nuget FSharp.Core redirects: force
+  
+nuget Chiron
+nuget FAKE
+nuget Freya >= 3.0.0-rc01
+nuget FSharp.Formatting
+nuget Microsoft.AspNetCore.Owin
+nuget Microsoft.AspNetCore.Server.Kestrel
+nuget Nancy >= 2.0-barneyrubble
+nuget RethinkDb.Driver
