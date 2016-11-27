@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>index</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="An attempt to provide a concrete, working example to demonstrate to C# developers how F# can improve their workflow and performance"/>
+    <meta name="author" content="Daniel J. Summers"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/style.css" />
+    <script type="text/javascript" src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">objects () |> functions</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h3><a name="Data-Model" class="anchor" href="#Data-Model">Data Model</a></h3>
+<p><em>(Feel free to browse <a href="https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-2">the checkpoint for step 2</a>
+as you follow along.)</em></p>
+<h4><a name="Overview" class="anchor" href="#Overview">Overview</a></h4>
+<p>For our data model, we will begin with how we will store it.  At a high level:</p>
+<ul>
+<li>Web logs have a name, an optional subtitle, a theme, a URL, and a time zone</li>
+<li>Users have an e-mail address, a password, a first name, a last name, a preferred name, and a personal URL</li>
+<li>Categories have a name, a URL-friendly "slug", and a description</li>
+<li>
+Posts have a title, a status, a permalink, when they were published and last updated, 0 or more tags, the text of the
+post, and a list of revisions of that post
+</li>
+<li>
+Pages have a title, a permalink, when they were published and last updated, whether they should show in the default
+page list (think "About", "Contact", etc.), the text of the page, and a list of revisions to that page
+</li>
+<li>
+Comments have a name, an e-mail address, an optional URL, a status, when they were posted, and the text of the
+comment
+</li>
+</ul>
+<p>As far as relationships among these entities:</p>
+<ul>
+<li>Users can have differing authorization levels among the different web logs to which they are authorized</li>
+<li>Categories, Posts, and Pages all each belong to a specific web log</li>
+<li>Comments belong to a specific Post</li>
+<li>Posts are linked to the user who authored them</li>
+<li>Categories can be nested (parent/child)</li>
+<li>Comments can be marked as replies to another comment</li>
+<li>Posts can be assigned to multiple Categories (and can have multiple Comments, as implied above)</li>
+<li>Revisions (Posts and Pages) will track the date/time of the revision and the text of the post or page as of that time</li>
+</ul>
+<p>Both Uno and Dos will use the same C# model.  For Tres, we'll convert classes to F# record types (and <code>null</code> checks to
+<code>Option</code>s).  For Quatro, we'll make some concrete types for some of these primitives, making it more difficult to
+represent an invalid state within our model.  (We'll also deal with the implications of those in step 3.)</p>
+<h4><a name="Implementation-Notes" class="anchor" href="#Implementation-Notes">Implementation Notes</a></h4>
+<p>Our C# data model looks very much like one you'd see in an Entity Framework project.  The major difference is that what
+would be the navigation properties; collections (ex. the <code>Revisions</code> collection in the <code>Page</code> and <code>Post</code>) are part of
+the type, rather than a <code>Revision</code> being its own entity, while parent navigation properties (ex. <code>WebLog</code> for entities
+that define a <code>WebLogId</code> property) do not exist.  Even if you are unfamiliar with Entity Framework, you will likely
+easily see how this model could be represented in a relational database.</p>
+<p>Some other design decisions:</p>
+<ul>
+<li>We will use strings (created from <code>Guid</code>s) as our Ids for entities</li>
+<li>
+Authorization levels, post statuses, and comment statuses are represented as strings, but we provide a means to avoid
+magic strings in the code while dealing with these
+</li>
+<li>
+Properties representing date/time will be stored as <code>long</code>/<code>int64</code>, representing ticks.  <em>(We'll use NodaTime for
+manipulation, but this would also support using something built-in like <code>DateTime.UtcNow.Ticks</code>.)</em>
+</li>
+<li>
+While technically a part of step 3, we will annotate all <code>Id</code> fields with the <code>JsonProperty("id")</code> attribute.
+RethinkDB will generate an <code>id</code> field for documents that do not have one, using it as the primary key, and this check
+is done case-sensitively.  Without this attribute, we would have to define a secondary index for our primary key, which
+wouldn't make much sense at all.
+</li>
+</ul>
+<h4><a name="Project-Specific-Notes" class="anchor" href="#Project-Specific-Notes">Project-Specific Notes</a></h4>
+<p><strong>Uno / Dos</strong> - <a href="uno-dos.html">In Depth</a></p>
+<p><strong>Tres</strong> - <a href="tres.html">In Depth</a></p>
+<p><strong>Quatro</strong> - <a href="quatro.html">In Depth</a></p>
+
+
+        </div>
+        <div class="span3">
+          <img src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">objects () |> functions</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">Home page</a></li>
+            <li class="divider"></li>
+            
+            <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">Source Code on GitHub</a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/license.html">License</a></li>
+            
+            
+            <li class="nav-header">Steps</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step1"><strong>1 |> Hello World</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step2"><strong>2 |> Data Model</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step3"><strong>3 |> RethinkDB Connection</strong></a></li>
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/danieljsummers/FromObjectsToFunctions"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>index</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="An attempt to provide a concrete, working example to demonstrate to C# developers how F# can improve their workflow and performance"/>
+    <meta name="author" content="Daniel J. Summers"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/style.css" />
+    <script type="text/javascript" src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">objects () |> functions</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h2><a name="RethinkDB-Connection" class="anchor" href="#RethinkDB-Connection">RethinkDB Connection</a></h2>
+<p>Database connections are generally defined at either the application or request instance levels.  The
+<a href="https://github.com/bchavez/RethinkDb.Driver">C# RethinkDB driver</a> is designed for the former, and configuring it as a
+singleton is the recommended implementation.  We will do that for our application.  In the process of ensuring that we
+can properly configure this instance, we will also have to address the concepts of configuration and dependency
+injection (or, in the case of our Freya implementation, its replacement).  You can review the all the code at
+<a href="https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-3">the checkpoint for step 3</a>.</p>
+<h3><a name="A-Bit-about-RethinkDB" class="anchor" href="#A-Bit-about-RethinkDB">A Bit about RethinkDB</a></h3>
+<p>RethinkDB is a document database, and the C# implementation allows us to represent our documents as Plain Old CLR
+Objects (AKA POCOs).  It uses JSON.Net to serialize POCOs into JSON documents, which are then stored by the server.
+It exposes collections of documents as "databases" and "tables" within each database, mirroring its relational database
+cousins.  However, there are no schemas for tables, and a table can have documents of varying formats.  Each table can
+have one or more indexes that can be used to retrieve documents without scanning the entire table.  It provides its own
+query language (ReQL) that utilizes a fluent interface, where queries begin with an <code>R.</code> or <code>r.</code> and end in a <code>Run*</code>
+statement.</p>
+<p>It has other features, such as server clustering and change feeds, but these will not be part of our project (although
+change feeds could be an interesting Step n-2 project for post comments).  We will use a single instance of RethinkDB,
+and a single database within it, for all our data.</p>
+<h3><a name="All-Implementations" class="anchor" href="#All-Implementations">All Implementations</a></h3>
+<p>Each of our implementations will allow for the following user-configurable options:</p>
+<ul>
+<li><code>Hostname</code> - The hostname for the server; defaults to "localhost"</li>
+<li><code>Port</code> - The port to use to connect to the server; defaults to 28015</li>
+<li><code>Database</code> - The default database to use for queries that do not specify a database; defaults to "test"</li>
+<li><code>AuthKey</code> - The authorization key to provide for the connection; defaults to "" (empty)</li>
+<li><code>Timeout</code> - How long to wait when connecting; defaults to 20</li>
+</ul>
+<p>Additionally, we will write start-up code that ensures our requisite tables exist, and that each of these tables has
+the appropriate indexes.  To hold our documents, we will create the following tables:</p>
+<ul>
+<li>Category</li>
+<li>Comment</li>
+<li>Page</li>
+<li>Post</li>
+<li>User</li>
+<li>WebLog</li>
+</ul>
+<p>We will be able to retrieve individual documents by Id without any further definition.  Additionally, we will create
+indexes to support the following scenarios:</p>
+<ul>
+<li>Category retrieval by web log Id <em>(used to generate lists of available categories)</em></li>
+<li>Category retrieval by web log Id and slug <em>(used to retrieve details for category archive pages)</em></li>
+<li>Comment retrieval by post Id <em>(used to retrieve comments for a post)</em></li>
+<li>Page retrieval by web log Id <em>(used to retrieve a list of pages)</em></li>
+<li>Page retrieval by permalink <em>(used to fulfill single page requests)</em></li>
+<li>Post retrieval by web log Id <em>(used many places)</em></li>
+<li>Post retrieval by category Id <em>(used to get posts for category archive pages)</em></li>
+<li>Post retrieval by tag <em>(used to get posts for tag archive pages)</em></li>
+<li>User retrieval by e-mail address and password <em>(used for log in)</em></li>
+</ul>
+<h3><a name="Individual-Implementations" class="anchor" href="#Individual-Implementations">Individual Implementations</a></h3>
+<p>Each of these not only evolves from step 2 to step 3, they also evolve as Uno moves to Quatro.  It may help
+understanding to read each of them, even if your interest is just in one of them.</p>
+<p><strong>Uno</strong> - <a href="uno.html">In Depth</a></p>
+<p><strong>Dos</strong> - <a href="dos.html">In Depth</a></p>
+<p><strong>Tres</strong> - <a href="tres.html">In Depth</a></p>
+<p><strong>Quatro</strong> - <a href="quatro.html">In Depth</a></p>
+
+
+        </div>
+        <div class="span3">
+          <img src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">objects () |> functions</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">Home page</a></li>
+            <li class="divider"></li>
+            
+            <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">Source Code on GitHub</a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/license.html">License</a></li>
+            
+            
+            <li class="nav-header">Steps</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step1"><strong>1 |> Hello World</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step2"><strong>2 |> Data Model</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step3"><strong>3 |> RethinkDB Connection</strong></a></li>
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/danieljsummers/FromObjectsToFunctions"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

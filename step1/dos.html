@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>dos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="An attempt to provide a concrete, working example to demonstrate to C# developers how F# can improve their workflow and performance"/>
+    <meta name="author" content="Daniel J. Summers"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/style.css" />
+    <script type="text/javascript" src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">objects () |> functions</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h3><a name="Dos-Step-1" class="anchor" href="#Dos-Step-1">Dos - Step 1</a></h3>
+<p>For this project, we'll also start with <code>project.json</code>, bringing in the dependencies we'll need.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="text">"dependencies": {
+  "Microsoft.AspNetCore.Owin": "1.0.0",
+  "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
+  "Nancy": "2.0.0-barneyrubble"
+},
+</code></pre></td></tr></table>
+<p>Nancy strives to provide a Super-Duper-Happy-Path (SDHP), where all you have to do is follow their conventions, and everything will "just work."  (You can also configure every aspect of it; it's only opinionated in its defaults.)  One of these conventions is that the controllers inherit from <code>NancyModule</code>, and when they do, no further configuration is required.  So, we create the <code>Modules</code> directory, and add <code>HomeModule.cs</code>, which looks like this:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">namespace</span> Dos.Modules
+{
+    <span class="k">using</span> Nancy;
+
+    <span class="k">public</span> <span class="k">class</span> HomeModule <span class="o">:</span> NancyModule
+    {
+        <span class="k">public</span> HomeModule() <span class="o">:</span> <span class="k">base</span>()
+        {
+            Get(<span class="s">"/"</span>, _ <span class="o">=</span><span class="o">&gt;</span> <span class="s">"Hello World from Nancy C#"</span>);
+        }
+    }
+}
+</code></pre></td></tr></table>
+<p>Since we'll be hosting this with Kestrel (via OWIN), we still need a <code>Startup.cs</code>, though its <code>Configure()</code> method looks a bit different:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">public</span> <span class="k">void</span> Configure(IApplicationBuilder app) <span class="o">=</span><span class="o">&gt;</span>
+    app.UseOwin(x <span class="o">=</span><span class="o">&gt;</span> x.UseNancy());
+</code></pre></td></tr></table>
+<p>(We need to add a using statement for <code>Nancy.Owin</code> so that the <code>UseNancy()</code> method is visible.)</p>
+<p>The <code>App.cs</code> file is identical to the one from Uno.</p>
+<p><a href="../step1">Back to Step 1</a></p>
+
+
+        </div>
+        <div class="span3">
+          <img src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">objects () |> functions</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">Home page</a></li>
+            <li class="divider"></li>
+            
+            <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">Source Code on GitHub</a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/license.html">License</a></li>
+            
+            
+            <li class="nav-header">Steps</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step1"><strong>1 |> Hello World</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step2"><strong>2 |> Data Model</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step3"><strong>3 |> RethinkDB Connection</strong></a></li>
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/danieljsummers/FromObjectsToFunctions"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

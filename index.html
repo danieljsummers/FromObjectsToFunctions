@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>objects () |&gt; functions
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="An attempt to provide a concrete, working example to demonstrate to C# developers how F# can improve their workflow and performance"/>
+    <meta name="author" content="Daniel J. Summers"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/style.css" />
+    <script type="text/javascript" src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">objects () |> functions</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h1><a name="objects-gt-functions" class="anchor" href="#objects-gt-functions">objects () |&gt; functions</a></h1>
+<p>This page serves / will serve as the table of contents for each step of the development process.  Below the TOC is a table with comparisons among the 4 projects.</p>
+<p><strong><a href="step1">Step 1</a></strong> - Hello World<br />
+Establish a web request response with the least possible / complex code</p>
+<p><strong><a href="step2">Step 2</a></strong> - Data Model<br />
+Create the persistent types we'll use for our application</p>
+<p><strong><a href="step3">Step 3</a></strong> - RethinkDB Connection<br />
+Configure and prepare a RethinkDB connection for use in our application</p>
+<p><strong>Step 4</strong> - Framework Setup<br />
+Create folders / conventions for our application and load some dummy data</p>
+<p><strong>Step 5</strong> - Routes<br />
+Establish the URLs that our application will recognize</p>
+<p><strong>Step 6</strong> - Views<br />
+Implement the web pages by which our application will display its information</p>
+<p><strong>Step 7</strong> - Log In<br />
+Users are important in this application!</p>
+<p><strong>Step 8</strong> - Page Publishing and Editing<br />
+Create and edit pages</p>
+<p><strong>Step 9</strong> - Post Publishing and Editing<br />
+Finally, we can write some posts!</p>
+<p><strong>Step 10</strong> - Categories and Tags<br />
+Handle lists of posts by category or tag</p>
+<p><strong>Step 11</strong> - RSS Feeds<br />
+Provide RSS and Atom feeds for our content</p>
+<p><strong>Step n</strong> - may be added later (yay, scope creep!)</p>
+<table>
+<thead>
+<tr class="header">
+<th><p>item</p></th>
+<th><p>Uno</p></th>
+<th><p>Dos</p></th>
+<th><p>Tres</p></th>
+<th><p>Quatro</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>Language</p></td>
+<td><p>C#</p></td>
+<td><p>C#</p></td>
+<td><p>F#</p></td>
+<td><p>F#</p></td>
+</tr>
+<tr class="even">
+<td><p>Server</p></td>
+<td><p>Kestrel</p></td>
+<td><p>Kestrel</p></td>
+<td><p>Kestrel</p></td>
+<td><p>Kestrel</p></td>
+</tr>
+<tr class="odd">
+<td><p>Framework</p></td>
+<td><p>ASP.NET Core</p></td>
+<td><p>Nancy</p></td>
+<td><p>Nancy</p></td>
+<td><p>Freya</p></td>
+</tr>
+<tr class="even">
+<td><p>Views</p></td>
+<td><p>Razor</p></td>
+<td><p>SSVE</p></td>
+<td><p>SSVE</p></td>
+<td><p>tbd</p></td>
+</tr>
+</tbody>
+</table>
+
+
+
+        </div>
+        <div class="span3">
+          <img src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">objects () |> functions</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">Home page</a></li>
+            <li class="divider"></li>
+            
+            <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">Source Code on GitHub</a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/license.html">License</a></li>
+            
+            
+            <li class="nav-header">Steps</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step1"><strong>1 |> Hello World</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step2"><strong>2 |> Data Model</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step3"><strong>3 |> RethinkDB Connection</strong></a></li>
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/danieljsummers/FromObjectsToFunctions"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

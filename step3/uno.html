@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>uno</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="An attempt to provide a concrete, working example to demonstrate to C# developers how F# can improve their workflow and performance"/>
+    <meta name="author" content="Daniel J. Summers"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/style.css" />
+    <script type="text/javascript" src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">objects () |> functions</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h3><a name="Uno-Step-3" class="anchor" href="#Uno-Step-3">Uno - Step 3</a></h3>
+<p>Our implementation here will fall into two broad categories - defining the configurable connection and table/index
+checking code that we can run at startup, and configuring ASP.NET Core's DI container to wire it all up.  Before we get
+to that, though, we need to add a few packages to <code>project.json</code> (under <code>dependencies</code>) for this step.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="text">"Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
+"Microsoft.Extensions.Configuration.Json": "1.0.0",
+"Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
+"RethinkDb.Driver": "2.3.15"
+</code></pre></td></tr></table>
+<h4><a name="Configurable-Connection" class="anchor" href="#Configurable-Connection">Configurable Connection</a></h4>
+<p>Our application will need an instance of RethinkDB's <code>IConnection</code> to utilize.  To support our configuration options,
+we will make a POCO called <code>DataConfig</code>, under a new <code>Data</code> directory in our project, and also give it an instance
+method to create the connection with the current values.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+<span class="l">26: </span>
+<span class="l">27: </span>
+<span class="l">28: </span>
+<span class="l">29: </span>
+<span class="l">30: </span>
+<span class="l">31: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">namespace</span> Uno.Data
+{
+    <span class="k">using</span> RethinkDb.Driver;
+    <span class="k">using</span> RethinkDb.Driver.Net;
+    
+    <span class="k">public</span> <span class="k">class</span> DataConfig
+    {
+        <span class="k">public</span> <span class="k">string</span> Hostname { get; set; }
+        
+        <span class="k">public</span> <span class="k">int</span> Port { get; set; }
+        
+        <span class="k">public</span> <span class="k">string</span> AuthKey { get; set; }
+        
+        <span class="k">public</span> <span class="k">int</span> Timeout { get; set; }
+        
+        <span class="k">public</span> <span class="k">string</span> Database { get; set; }
+        
+        <span class="k">public</span> IConnection CreateConnection()
+        {
+            <span class="k">var</span> conn <span class="o">=</span> RethinkDB.R.Connection();
+            
+            <span class="k">if</span> (<span class="k">null</span> <span class="o">!</span><span class="o">=</span> Hostname) { conn <span class="o">=</span> conn.Hostname(Hostname); }
+            <span class="k">if</span> (<span class="n">0</span> <span class="o">!</span><span class="o">=</span> Port) { conn <span class="o">=</span> conn.Port(Port); }
+            <span class="k">if</span> (<span class="k">null</span> <span class="o">!</span><span class="o">=</span> AuthKey) { conn <span class="o">=</span> conn.AuthKey(AuthKey); }
+            <span class="k">if</span> (<span class="k">null</span> <span class="o">!</span><span class="o">=</span> Database) { conn <span class="o">=</span> conn.Db(Database); }
+            <span class="k">if</span> (<span class="n">0</span> <span class="o">!</span><span class="o">=</span> Timeout) { conn <span class="o">=</span> conn.Timeout(Timeout); }
+            
+            <span class="k">return</span> conn.Connect();
+        }
+    }
+}
+</code></pre></td></tr></table>
+<p>Note that the connection builder uses a fluent interface.  We just as well could have chained all of these together,
+using defaults where we had no data, like so:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">RethinkDB.R.Connection()
+    .Hostname(Hostname <span class="o">?</span><span class="o">?</span> RethinkDBConstants.DefaultHostname)
+    .Port(<span class="n">0</span> <span class="o">=</span><span class="o">=</span> Port <span class="o">?</span> RethinkDBConstants.DefaultPort <span class="o">:</span> Port)
+    <span class="o">.</span><span class="o">.</span>.etc.<span class="o">.</span><span class="o">.</span>
+    .Connect();
+</code></pre></td></tr></table>
+<p>We could then actually define this as a fat-arrow (<code>=&gt;</code>) function and omit the return.  If C# were our final
+destination, that's a fine implementation; of course, it's not, and I've structured it this way to illustrate that we
+really only have to call the configuration methods for properties that we've specified in our JSON file.</p>
+<p>Note also that we are mutating the <code>conn</code> variable with the result of each builder call.  Do we need to do this?  I
+have no idea; if the C# driver is (under the hood) mutating itself, we don't; if it's returning a new version of the
+builder with a change made (the F#/immutable way of doing things), we do.  I certainly could find out <em>(yay, open
+source!)</em>, but it's an implementation detail we don't need to know.  It's not wrong to do it this way, and in future
+implementations, we will be accomplishing the same thing without using mutation - at least in our code.</p>
+<h4><a name="Tables" class="anchor" href="#Tables">Tables</a></h4>
+<p>RethinkDB uses the term "table" to represent a collection of documents.  Other document databases use the term
+"collection" or "document store"; this is the rough equivalent of a relational table.  Of course, the difference here
+is that the documents do not all have to conform to the same schema.  <code>Data/Table.cs</code> contains C# constants we will use
+to reference our tables.</p>
+<h4><a name="Ensuring-Tables-and-Indexes-Exist" class="anchor" href="#Ensuring-Tables-and-Indexes-Exist">Ensuring Tables and Indexes Exist</a></h4>
+<p>Many of the new APIs that are provided within .NET Core are implemented as extension methods on existing objects.
+Since <code>IConnection</code> represents our connection to RethinkDB, we'll target that type for our extension methods.  We
+create the <code>EnvironmentExtensions.cs</code> file under the <code>Data</code> directory, and define it as a <code>public static</code> class.</p>
+<p>In our overall plan for step 3, we defined several types of queries we want to be able to run against these tables.
+While RethinkDB will create a table the first time you try to store a document in it, we cannot define indexes against
+them in this scenario.  Indexes are the way RethinkDB avoids a complete table scan for documents; the concept is very
+similar to an index on a relational table.  Since we need to define these indexes before our application can use them,
+we'll need make sure the tables exist, so we can create indexes against them.</p>
+<p>We will not go line-by-line through <code>EnvironmentExtensions.cs</code>; it's rather straightforward, and simply ensures that
+the database, tables, and indexes exist.  It is our first exposure to the RethinkDB API, though, so be sure to
+<a href="https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-3/src/1-AspNetCore-CSharp/Data/EnvironmentExtensions.cs">review the source</a>
+to ensure you get a sense of how data access is designed to work in the RethinkDB driver.</p>
+<h4><a name="Dependency-Injection" class="anchor" href="#Dependency-Injection">Dependency Injection</a></h4>
+<p>Now that we have defined our connection, and a method to make sure we have the data environment we need, we need a
+connection.  <code>appsettings.json</code> is the standard .NET Core name for the configuration file, so we create one with the
+following values:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="text">{
+  "RethinkDB": {
+    "Hostname": "my-rethinkdb-server",
+    "Database": "O2F1"
+  }
+}
+</code></pre></td></tr></table>
+<p>The database name, here <code>O2F1</code>, will be different in each of our examples; this way, we can verify that each of our
+instances created the tables and indexes correctly.</p>
+<p>When we were doing our quick-and-dirty "Hello World" in step 1, we had very minimal content in <code>Startup.cs</code>.  Now,
+we'll flesh that out a little more.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+<span class="l">26: </span>
+<span class="l">27: </span>
+<span class="l">28: </span>
+<span class="l">29: </span>
+<span class="l">30: </span>
+<span class="l">31: </span>
+<span class="l">32: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">[add]
+<span class="k">using</span> Microsoft.AspNetCore.Hosting;
+<span class="k">using</span> Microsoft.Extensions.Configuration;
+<span class="k">using</span> Microsoft.Extensions.DependencyInjection;
+<span class="k">using</span> Microsoft.Extensions.Options;
+<span class="k">using</span> Uno.Data;
+[/add]
+
+<span class="k">public</span> <span class="k">class</span> Startup
+{
+    <span class="k">public</span> <span class="k">static</span> IConfigurationRoot Configuration { get; <span class="k">private</span> set; }
+    
+    <span class="k">public</span> Startup(IHostingEnvironment env)
+    {
+        <span class="k">var</span> builder <span class="o">=</span> <span class="k">new</span> ConfigurationBuilder()
+            .SetBasePath(env.ContentRootPath)
+            .AddJsonFile(<span class="s">"appsettings.json"</span>, optional: <span class="k">true</span>, reloadOnChange: <span class="k">true</span>)
+            .AddJsonFile($<span class="s">"appsettings.{env.EnvironmentName}.json"</span>, optional: <span class="k">true</span>)
+            .AddEnvironmentVariables();
+        Configuration <span class="o">=</span> builder.Build();
+    }
+    
+    <span class="k">public</span> <span class="k">void</span> ConfigureServices(IServiceCollection services)
+    {
+        services.AddOptions();
+        services.Configure&lt;DataConfig&gt;(Configuration.GetSection(<span class="s">"RethinkDB"</span>));
+        
+        <span class="k">var</span> cfg <span class="o">=</span> services.BuildServiceProvider().GetService&lt;IOptions&lt;DataConfig&gt;<span class="o">&gt;</span>().Value;
+        <span class="k">var</span> conn <span class="o">=</span> cfg.CreateConnection();
+        conn.EstablishEnvironment(cfg.Database).GetAwaiter().GetResult();
+        services.AddSingleton(conn);
+    }
+</code></pre></td></tr></table>
+<p>This does the following:</p>
+<ul>
+<li>
+Creates a configuration tree that is a union of <code>appsettings.json</code>, <code>appsettings.{environment}.json</code>, and environment
+variables (each of those overriding the prior one if settings are specified in both)
+</li>
+<li>
+Establishes the new <code>Options</code> API, registers our <code>DataConfig</code> as an option set, and specifies that it should be
+obtained from the <code>RethinkDB</code> section of the configuration
+</li>
+<li>Creates a connection based on our configuration</li>
+<li>
+Runs the <code>EstablishEnvironment</code> extension method, so that when we're done, we have the tables and indexes we expect
+<em>(since it's an <code>async</code> method, we use the <code>.GetAwaiter().GetResult()</code> chain so we don't have to define
+<code>ConfigureServices</code> as <code>async</code>)</em>
+</li>
+<li>Registers our <code>IConnection</code> for injection</li>
+</ul>
+<p>Now, if we build and run our application, then use RethinkDB's administration site to look at our server, we should now
+see an <code>O2F1</code> database created, along with our tables and indexes.</p>
+<p><a href="../step3">Back to Step 3</a></p>
+
+
+        </div>
+        <div class="span3">
+          <img src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">objects () |> functions</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">Home page</a></li>
+            <li class="divider"></li>
+            
+            <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">Source Code on GitHub</a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/license.html">License</a></li>
+            
+            
+            <li class="nav-header">Steps</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step1"><strong>1 |> Hello World</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step2"><strong>2 |> Data Model</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step3"><strong>3 |> RethinkDB Connection</strong></a></li>
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/danieljsummers/FromObjectsToFunctions"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

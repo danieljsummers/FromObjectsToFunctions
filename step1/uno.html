@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>uno</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="An attempt to provide a concrete, working example to demonstrate to C# developers how F# can improve their workflow and performance"/>
+    <meta name="author" content="Daniel J. Summers"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/style.css" />
+    <script type="text/javascript" src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">objects () |> functions</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h3><a name="Uno-Step-1" class="anchor" href="#Uno-Step-1">Uno - Step 1</a></h3>
+<p><em>NOTE: While there is a "web" target for C#, it pulls in a lot of files that I'd rather not go through and explain.  We
+will not be using Entity Framework for anything, and though this application will use some of the Identity features of
+ASP.NET Core MVC, we will not be using its membership features.  Since all of that is out of scope for this effort, and
+all of this is in the "web" template, we won't use it.</em>  😃</p>
+<p>To start, we'll open <code>project.json</code> and add the dependencies we'll need:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="text">"dependencies": {
+  "Microsoft.AspNetCore.Owin": "1.0.0",
+  "Microsoft.AspNetCore.Server.Kestrel": "1.0.0"
+},
+</code></pre></td></tr></table>
+<p><code>dotnet restore</code> fixes up the actual packages.  Next, we'll create the <code>Startup.cs</code> file.  Within its <code>Configure</code> method, we'll do a very basic lambda to return a string:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">public</span> <span class="k">void</span> Configure(IApplicationBuilder app) <span class="o">=</span><span class="o">&gt;</span>
+    app.Run(<span class="k">async</span> context <span class="o">=</span><span class="o">&gt;</span> await context.Response.WriteAsync(<span class="s">"Hello World from ASP.NET Core"</span>));
+</code></pre></td></tr></table>
+<p>(We put in using statements for <code>Microsoft.AspNetCore.Builder</code> to make the <code>IApplicationBuilder</code> visible and <code>Microsoft.AspNetCore.Http</code> to expose the <code>WriteAsync()</code> method on the <code>Response</code> object.)</p>
+<p>We'll rename <code>Program.cs</code> to <code>App.cs</code>.  (Why?  Well - why not?)  Then, within the <code>Main()</code> method, we'll construct a Kestrel instance and run it.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">using</span> (<span class="k">var</span> host <span class="o">=</span> <span class="k">new</span> WebHostBuilder().UseKestrel().UseStartup&lt;Startup&gt;().Build())
+{
+    host.Run();
+}
+</code></pre></td></tr></table>
+<p>(Most demos don't show the web host wrapped in a using block; it's <code>IDisposable</code>, though, so it's a good idea.)</p>
+<p>At this point, <code>dotnet run</code> should give us a successful startup, and browsing to localhost:5000 returns our greeting.</p>
+<p><a href="../step1">Back to Step 1</a></p>
+
+
+        </div>
+        <div class="span3">
+          <img src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">objects () |> functions</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">Home page</a></li>
+            <li class="divider"></li>
+            
+            <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">Source Code on GitHub</a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/license.html">License</a></li>
+            
+            
+            <li class="nav-header">Steps</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step1"><strong>1 |> Hello World</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step2"><strong>2 |> Data Model</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step3"><strong>3 |> RethinkDB Connection</strong></a></li>
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/danieljsummers/FromObjectsToFunctions"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

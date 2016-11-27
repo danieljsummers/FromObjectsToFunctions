@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>dos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="An attempt to provide a concrete, working example to demonstrate to C# developers how F# can improve their workflow and performance"/>
+    <meta name="author" content="Daniel J. Summers"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/style.css" />
+    <script type="text/javascript" src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">objects () |> functions</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h3><a name="Dos-Step-3" class="anchor" href="#Dos-Step-3">Dos - Step 3</a></h3>
+<p>This step will follow the same general path as <a href="uno.html">Uno</a>, but we'll also iterate on what we made there to bring
+some of the code into a more functional style.</p>
+<h4><a name="Changes" class="anchor" href="#Changes"><code>project.json</code> Changes</a></h4>
+<p>We only need to add the RethinkDB package to what we had at the end of step 2 (under <code>dependencies</code>):</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="text">"RethinkDb.Driver": "2.3.15"
+</code></pre></td></tr></table>
+<p>Run <code>dotnet restore</code> to pull in that dependency.  Also, we'll bring across the entire <code>Data</code> directory we created in
+<strong>Uno</strong> during this step.  We'll be able to use <code>Table.cs</code> and <code>EnvironmentExtensions.cs</code> as is (except for changing
+the namespace to <code>Dos.Data</code>).</p>
+<h4><a name="Configurable-Connection" class="anchor" href="#Configurable-Connection">Configurable Connection</a></h4>
+<p>Since <code>appsettings.json</code> is a .NET Core thing, we will not use it here.  We can still use JSON to configure our
+connection, though; here's the <code>data-config.json</code> file:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="text">{
+  "Hostname": "my-rethinkdb-server",
+  "Database": "O2F2"
+}
+</code></pre></td></tr></table>
+<p>To support this, we'll need to change a couple of other things.  First, in our <code>DataConfig</code> file, we'll add the
+following using statement and static method:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">using</span> Newtonsoft.Json;
+<span class="o">.</span><span class="o">.</span><span class="o">.</span>
+<span class="k">public</span> <span class="k">static</span> DataConfig FromJson(<span class="k">string</span> json) <span class="o">=</span><span class="o">&gt;</span> JsonConvert.DeserializeObject&lt;DataConfig&gt;(json);
+</code></pre></td></tr></table>
+<p>Now we can create our configuration from this JSON once we read it in.  We're also going to modify the
+<code>CreateConnection()</code> method; we'll also add some more <code>using</code>s and a support property.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">using</span> System;
+<span class="k">using</span> System.Collections.Generic;
+<span class="k">using</span> System.Linq;
+<span class="k">using</span> <span class="k">static</span> RethinkDb.Driver.Net.Connection;
+<span class="o">.</span><span class="o">.</span><span class="o">.</span>
+<span class="k">private</span> IEnumerable&lt;Func&lt;Builder, Builder&gt;<span class="o">&gt;</span> Blocks
+{
+    get
+    {
+        <span class="k">yield</span> <span class="k">return</span> builder <span class="o">=</span><span class="o">&gt;</span> <span class="k">null</span> <span class="o">=</span><span class="o">=</span> Hostname <span class="o">?</span> builder <span class="o">:</span> builder.Hostname(Hostname);
+        <span class="k">yield</span> <span class="k">return</span> builder <span class="o">=</span><span class="o">&gt;</span> <span class="n">0</span> <span class="o">=</span><span class="o">=</span> Port <span class="o">?</span> builder <span class="o">:</span> builder.Port(Port);
+        <span class="k">yield</span> <span class="k">return</span> builder <span class="o">=</span><span class="o">&gt;</span> <span class="k">null</span> <span class="o">=</span><span class="o">=</span> AuthKey <span class="o">?</span> builder <span class="o">:</span> builder.AuthKey(AuthKey);
+        <span class="k">yield</span> <span class="k">return</span> builder <span class="o">=</span><span class="o">&gt;</span> <span class="k">null</span> <span class="o">=</span><span class="o">=</span> Database <span class="o">?</span> builder <span class="o">:</span> builder.Db(Database);
+        <span class="k">yield</span> <span class="k">return</span> builder <span class="o">=</span><span class="o">&gt;</span> <span class="n">0</span> <span class="o">=</span><span class="o">=</span> Timeout <span class="o">?</span> builder <span class="o">:</span> builder.Timeout(Timeout);
+    }
+}
+
+<span class="k">public</span> IConnection CreateConnection() <span class="o">=</span><span class="o">&gt;</span>
+    Blocks.Aggregate(RethinkDB.R.Connection(), (builder, block) <span class="o">=</span><span class="o">&gt;</span> block(builder)).Connect();
+</code></pre></td></tr></table>
+<p>If this is the first time you've seen code like this, you may be thinking "Why would we do something like that?"  We're
+moving from an imperative style, like we used in <strong>Uno</strong>, to a more declarative style.  <code>Blocks</code> is an enumeration (or
+sequence) where each item yielded takes a connection builder, and returns either the original connection builder it
+received or one that has been modified with a configuration parameter.  If you didn't understand that last sentence,
+look at the code, then read it again; understanding this structure will pay dividends once we're knee-deep in F#.</p>
+<p>Once you understand the <code>Blocks</code> property, take a look at the <code>CreateConnection()</code> method.  This uses the LINQ method
+<code>Aggregate</code>, which takes two parameters: an initial state; and a function that will be given the current state and each
+item, and will return the "current" state after that item has been processed.  If that makes no sense, imagine you had
+a sequence <code>exSeq</code> with the letters "A", "B", and "C".  If you were to run
+<code>var str = exSeq.Aggregate("", (state, letter) =&gt; String.Format("{0},{1}", state, letter));</code>, <code>str</code> would hold the
+string ",A,B,C".  The "initial state" is simply the starting value; but, every iteration must return a value of that
+same type.</p>
+<p>Hopefully <code>Aggregate</code> is making sense at this point.  Taking a forward-looking side trip - we're going to see it, with
+a different parameter order, as the <code>fold</code> function in our F# code.  You've likely heard the term "map/reduce" - this
+describes a process where, given a data collection, you can transform it into a shape you need (map) and distill that
+data into the answer you need (reduce).  (Yes, purists, this is a bit of a simplification.)  F# provides <code>map</code> and
+<code>reduce</code> implementations for several collection types; however, <code>reduce</code> cannot produce a type different from that of
+the underlying collection - <code>fold</code> is what does that.</p>
+<p>Back from our side trip, what this code does is:</p>
+<ul>
+<li>
+Seeds <code>Aggregate</code> with <code>RethinkDB.R.Connection()</code>, which is an instance of <code>Connection.Builder</code> <em>(<code>Builder</code> is a
+nested type within <code>RethinkDb.Driver.Net.Connection</code>; the <code>using static</code> makes it visible the way we've used it here.)</em>
+</li>
+<li>
+Loops through each item of our enumeration.  Since each item is a <code>Func&lt;Builder, Builder&gt;</code>, we pass the item the
+current builder; it returns a builder that may have been further configured ("aggregating" our configuration).
+</li>
+<li>
+Once the <code>Aggregate</code> has completed, we're ready to call <code>Connect()</code> on our connection builder, and return that from
+our method.
+</li>
+</ul>
+<p>Seeing a more functional style with C# should help when we start seeing F# collections.</p>
+<h4><a name="Dependency-Injection" class="anchor" href="#Dependency-Injection">Dependency Injection</a></h4>
+<p>With Nancy, if you want to add forks to the SDHP, you have to provide a bootstrapper that will handle the startup code.
+For most purposes, the best way is to simply override <code>DefaultNancyBootstrapper</code>; that way, any code you don't provide
+will use the default, and you can call <code>base</code> methods from your overridden ones, so all the SDHP magic continues to
+work.</p>
+<p>Here's the custom bootstrapper we'll use:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">namespace</span> Dos
+{
+    <span class="k">using</span> Dos.Data;
+    <span class="k">using</span> Nancy;
+    <span class="k">using</span> Nancy.TinyIoc;
+    <span class="k">using</span> System.IO;
+    
+    <span class="k">public</span> <span class="k">class</span> DosBootstrapper <span class="o">:</span> DefaultNancyBootstrapper
+    {
+        <span class="k">public</span> DosBootstrapper() <span class="o">:</span> <span class="k">base</span>() { }
+        
+        <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> ConfigureApplicationContainer(TinyIoCContainer container)
+        {
+            <span class="k">base</span>.ConfigureApplicationContainer(container);
+            
+            <span class="k">var</span> cfg <span class="o">=</span> DataConfig.FromJson(File.ReadAllText(<span class="s">"data-config.json"</span>));
+            <span class="k">var</span> conn <span class="o">=</span> cfg.CreateConnection();
+            conn.EstablishEnvironment(cfg.Database).GetAwaiter().GetResult();
+            container.Register(conn);
+        }
+    }
+}
+</code></pre></td></tr></table>
+<p>This looks very similar to the code from the ASP.NET Core implementation, with the exception of how we're getting the
+configuration.  We're all done except for two minor fixes.  First, we need to tell Nancy to use this bootstrapper
+instead of the default.  This is <code>Startup.cs</code>:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">public</span> <span class="k">void</span> Configure(IApplicationBuilder app) <span class="o">=</span><span class="o">&gt;</span>
+    app.UseOwin(x <span class="o">=</span><span class="o">&gt;</span> x.UseNancy(options <span class="o">=</span><span class="o">&gt;</span> options.Bootstrapper <span class="o">=</span> <span class="k">new</span> DosBootstrapper()));
+</code></pre></td></tr></table>
+<p>Finally, we need to specify that our <code>data-config.json</code> file should be copied to the output directory; otherwise, it
+will just sit on the hard drive while you scratch your head trying to figure out why your application can't connect.
+<em>(Ask me how I know...)</em>  This change is in <code>project.json</code>, just under the <code>emitEntryPoint</code> declaration (included here
+for context):</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="text">"emitEntryPoint": true,
+"copyToOutput": {
+  "include": "data-config.json"
+}
+</code></pre></td></tr></table>
+<p>At this point, you should be able to <code>dotnet run</code> and, once the console says that it's listening, you should be able to
+see the database, tables, and indexes in the <code>O2F2</code> database.</p>
+<p><a href="../step3">Back to Step 3</a></p>
+
+
+        </div>
+        <div class="span3">
+          <img src="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">objects () |> functions</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/index.html">Home page</a></li>
+            <li class="divider"></li>
+            
+            <li><a href="https://github.com/danieljsummers/FromObjectsToFunctions">Source Code on GitHub</a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/license.html">License</a></li>
+            
+            
+            <li class="nav-header">Steps</li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step1"><strong>1 |> Hello World</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step2"><strong>2 |> Data Model</strong></a></li>
+            <li><a href="file://C:\Users\danie\Documents\Sandbox\FromObjectsToFunctions\dox\tools\../output/step3"><strong>3 |> RethinkDB Connection</strong></a></li>
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/danieljsummers/FromObjectsToFunctions"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>
