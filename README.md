@@ -36,4 +36,4 @@ _This learning is not my primary occupation, so the pace may be slow; my hope is
 ## The Steps
 
 The plan is laid out, and will be documented as we go along, on
-[the wiki](https://github.com/danieljsummers/FromObjectsToFunctions/wiki).
+[GitHub Pages](https://danieljsummers.github.io/FromObjectsToFunctions/).

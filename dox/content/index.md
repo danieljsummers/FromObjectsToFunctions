@@ -40,6 +40,6 @@ Provide RSS and Atom feeds for our content
 |  item  | Uno | Dos | Tres | Quatro |
 | --- | --- | --- | --- | --- |
 | Language | C# | C# | F# | F# |
-| Server | Kestrel | Kestrel | Kestrel | Kestrel |
+| Server | Kestrel | Kestrel | Kestrel | Suave |
 | Framework | ASP.NET Core | Nancy | Nancy | Freya |
-| Views | Razor | SSVE | SSVE | tbd |
+| Views | Razor | SSVE | SSVE | SSVE |
