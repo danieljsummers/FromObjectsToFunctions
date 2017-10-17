@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Uno</AssemblyName>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
+  </ItemGroup>
+
+</Project>
