@@ -8,6 +8,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <Compile Include="Entities.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
 
@@ -15,6 +16,7 @@
     <PackageReference Include="Freya" Version="4.0.0-alpha-*" IncludePrerelease="true" />
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.*" />
   </ItemGroup>
 
 </Project>

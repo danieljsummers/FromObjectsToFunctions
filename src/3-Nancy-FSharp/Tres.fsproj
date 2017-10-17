@@ -8,6 +8,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <Compile Include="Entities.fs" />
     <Compile Include="HomeModule.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
@@ -16,6 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
     <PackageReference Include="Nancy" Version="2.0.0-*" IncludePrerelease="true" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.*" />
   </ItemGroup>
 
 </Project>
