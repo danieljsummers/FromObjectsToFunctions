@@ -36,8 +36,10 @@ are their own type.  Also, each condition does not have to have the same type; i
 one condition that has one type (or no type at all), and other condition with a completely different type.  (We don't
 use that with these types.)
 
-OK, enough talking; some code will help it make sense.  One of the forms of a DU is called a single-case discriminated
-union; it can be used to wrap primitives to make them more meaningful.  We'll create the following single-case DUs:
+To start, bring the `Entities.fs` file over from Tres, and ensure `Quatro.fsproj` has the JSON.Net dependency. Then,
+some code will help all this DU stuff make sense.  One of the forms of a DU is called a single-case discriminated union;
+it can be used to wrap primitives to make them more meaningful.  We'll create the following single-case DUs at the top
+of the file, before our other types:
 *)
 type CategoryId = CategoryId of string
 type CommentId  = CommentId  of string 
@@ -145,7 +147,7 @@ with
 access\*\*, just `Status = Draft`.  (`Status = Spam` does not compile.)
 
 You can
-[review the entire set of types](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-2/src/4-Freya-FSharp/Entities.fs)
+[review the entire set of types](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-2-core2/src/4-Freya-FSharp/Entities.fs)
 to see where these various DUs were used.  While we could certainly take this much further, these simple changes have
 made our types more meaningful, while eliminating a lot of the invalid states we could have assigned in our code.
 

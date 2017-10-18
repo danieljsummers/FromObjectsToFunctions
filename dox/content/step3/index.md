@@ -5,8 +5,7 @@ Database connections are generally defined at either the application or request 
 singleton is the recommended implementation.  We will do that for our application.  In the process of ensuring that we
 can properly configure this instance, we will also have to address the concepts of configuration and dependency
 injection (or, in the case of our Freya implementation, its replacement).  You can review the all the code at
-[the checkpoint for step 3](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-3).
-
+[the checkpoint for step 3](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-3-core2).
 
 ### A Bit about RethinkDB
 

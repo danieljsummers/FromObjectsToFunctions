@@ -5,13 +5,23 @@ will not be using Entity Framework for anything, and though this application wil
 ASP.NET Core MVC, we will not be using its membership features.  Since all of that is out of scope for this effort, and
 all of this is in the "web" template, we won't use it._  😃
 
-To start, we'll open `project.json` and add the dependencies we'll need:
+To start, we'll make sure the `.csproj` file is named `Uno.csproj`. Then, under the first `PropertyGroup` item, we'll add a few items; when we're done, it should look like this:
 
     [lang=text]
-    "dependencies": {
-      "Microsoft.AspNetCore.Owin": "1.0.0",
-      "Microsoft.AspNetCore.Server.Kestrel": "1.0.0"
-    },
+    <PropertyGroup>
+      <AssemblyName>Uno</AssemblyName>
+      <VersionPrefix>1.0.0</VersionPrefix>
+      <OutputType>Exe</OutputType>
+      <TargetFramework>netcoreapp2.0</TargetFramework>
+    </PropertyGroup>
+
+Then, we'll add a new section, `ItemGroup`, and two dependencies:
+
+    [lang=text]
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
+      <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
+    </ItemGroup>
 
 `dotnet restore` fixes up the actual packages.  Next, we'll create the `Startup.cs` file.  Within its `Configure` method, we'll do a very basic lambda to return a string:
 

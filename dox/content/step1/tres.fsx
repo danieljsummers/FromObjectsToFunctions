@@ -9,11 +9,11 @@
 (**
 ### Tres - Step 1
 
-Here, we're making the leap to F#.  The changes to `project.json` for the dependent packages are the same as they were
-for [Dos](dos.html).  F# projects are historically not split into directories, as compilation order is significant, and
-having them in the same directory allows the tooling to ensure that the compilation order is preserved.  With the
-structure of `project.json`, this is not necessarily a limitation (though the tooling still doesn't support it, as of
-this writing), but we'll follow it for our purposes here.
+Here, we're making the leap to F#.  Once we ensure that our project file is named `Tres.fsproj`, the contents of the
+file should be the same as they were for [Dos](./dos.html).  F# projects are historically not split into directories, as
+compilation order is significant, and having them in the same directory allows the tooling to ensure that the
+compilation order is preserved.  With the structure of the `.fsproj` file, this is not necessarily a limitation (though
+the tooling still doesn't support it, as of this writing), but we'll follow it for our purposes here.
 
 The module is created as `HomeModule.fs` in the project root:
 *)
@@ -27,7 +27,7 @@ type HomeModule() as this =
   do
     this.Get("/", fun _ -> "Hello World from Nancy F#")
 (**
-If you look at [Dos](dos.html), you can see how the translation occurred:
+If you look at [Dos](./dos.html), you can see how the translation occurred:
 
 - "using" becomes "open"
 - F# does not express constructors in the way C# folks are used to seeing them.  Parameters to the class are specified
@@ -72,25 +72,14 @@ look like).  An F# source file must start with either a namespace or module decl
 name will be `Tres.Startup`, so we have to define a module for our `let` binding / entry point.
 
 At this point, `dotnet build` will fail.  I mentioned compilation order earlier; we've added one file and renamed the
-other, but we have yet to tell the compiler about them, or how they should be ordered.  Back in `project.json`, look for
-the `buildOptions` entry, and replace
+other, but we have yet to tell the compiler about them, or how they should be ordered.  Back in `Tres.fsproj`, between
+the `PropertyGroup` and the `ItemGroup`, add the following `ItemGroup`:
 
     [lang=text]
-    "compile": {
-      "includeFiles": [
-        "Program.fs"
-      ]
-    }
-
-with
-
-    [lang=text]
-    "compile": {
-      "includeFiles": [
-        "HomeModule.fs",
-        "App.fs"
-      ]
-    }
+    <ItemGroup>
+      <Compile Include="HomeModule.fs" />
+      <Compile Include="App.fs" />
+    </ItemGroup>
 
 (In the future, we'll add updating this list to our discipline of creating a new file.)
 

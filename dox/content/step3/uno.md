@@ -2,13 +2,13 @@
 
 Our implementation here will fall into two broad categories - defining the configurable connection and table/index
 checking code that we can run at startup, and configuring ASP.NET Core's DI container to wire it all up.  Before we get
-to that, though, we need to add a few packages to `project.json` (under `dependencies`) for this step.
+to that, though, we need to add a few packages to `Uno.csproj` (under the dependency `ItemGroup`) for this step.
 
     [lang=text]
-    "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0",
-    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
-    "RethinkDb.Driver": "2.3.15"
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.*" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.*" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.*" />
+    <PackageReference Include="RethinkDb.Driver" Version="2.*" />
 
 #### Configurable Connection
 
@@ -90,7 +90,7 @@ we'll need make sure the tables exist, so we can create indexes against them.
 
 We will not go line-by-line through `EnvironmentExtensions.cs`; it's rather straightforward, and simply ensures that
 the database, tables, and indexes exist.  It is our first exposure to the RethinkDB API, though, so be sure to
-[review the source](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-3/src/1-AspNetCore-CSharp/Data/EnvironmentExtensions.cs)
+[review the source](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-3-core2/src/1-AspNetCore-CSharp/Data/EnvironmentExtensions.cs)
 to ensure you get a sense of how data access is designed to work in the RethinkDB driver.
 
 #### Dependency Injection

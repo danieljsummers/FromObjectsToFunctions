@@ -1,7 +1,8 @@
 ### Data Model
 
-_(Feel free to browse [the checkpoint for step 2](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-2)
-as you follow along.)_
+_(Feel free to browse
+[the checkpoint for step 2](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-2-core2) as you follow
+along.)_
 
 #### Overview
 

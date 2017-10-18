@@ -1,13 +1,20 @@
 ### Dos - Step 1
 
-For this project, we'll also start with `project.json`, bringing in the dependencies we'll need.
+For this project, we'll make sure our project file is `Dos.csproj`, and modify it the way we did [for Uno](./uno.html); we'll include one extra dependency to bring in Nancy.
 
     [lang=text]
-    "dependencies": {
-      "Microsoft.AspNetCore.Owin": "1.0.0",
-      "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
-      "Nancy": "2.0.0-barneyrubble"
-    },
+    <PropertyGroup>
+      <AssemblyName>Dos</AssemblyName>
+      <VersionPrefix>1.0.0</VersionPrefix>
+      <OutputType>Exe</OutputType>
+      <TargetFramework>netcoreapp2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
+      <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
+      <PackageReference Include="Nancy" Version="2.0.0-*" IncludePrerelease="true" />
+    </ItemGroup>
 
 Nancy strives to provide a Super-Duper-Happy-Path (SDHP), where all you have to do is follow their conventions, and everything will "just work."  (You can also configure every aspect of it; it's only opinionated in its defaults.)  One of these conventions is that the controllers inherit from `NancyModule`, and when they do, no further configuration is required.  So, we create the `Modules` directory, and add `HomeModule.cs`, which looks like this:
 

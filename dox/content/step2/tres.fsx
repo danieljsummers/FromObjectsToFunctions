@@ -19,7 +19,11 @@ with
 As we make the leap to F#, we're changing things around significantly.  Remember our
 [discussion about the flat structure of an F# project](../step1/tres.html)?  Instead of an `Entities` directory with a
 lot of little files, we'll define a single `Entities.fs` file in the root of the project.  Don't forget to add it to
-the list of compiled files in `project.json`; it should go above `HomeModule.fs`.
+the list of compiled files in `Tres.fsproj`; it should go above `HomeModule.fs`. Also, while we're in there, we'll add
+the JSON.Net dependency in the `ItemGroup` for dependencies:
+
+    [lang=text]
+    <PackageReference Include="Newtonsoft.Json" Version="10.*" />
 
 Next up, we will change the static classes that we created to eliminate magic strings into modules.  The
 `AuthorizationLevel` type in C# looked like:
@@ -151,7 +155,7 @@ operations you would expect, but there are some differences.
 - While not demonstrated here, arrays are defined between `[|` `|]` pairs, also with elements separated by semicolons.
 
 Before continuing on to [Quatro](quatro.html), you should familiarize yourself with the
-[types in this step](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-2/src/3-Nancy-FSharp/Entities.fs).
+[types in this step](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-2-core2/src/3-Nancy-FSharp/Entities.fs).
 
 [Back to Step 2](../step2)
 *)

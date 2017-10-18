@@ -12,50 +12,26 @@
 (**
 ### Quatro - Step 1
 
-Having [already made the leap to F#](tres.html), we will now do our Hello World in Freya.  This is adapted from the
-"Getting Started" article on their site.
-
-First up, we'll attack `project.json`.  This one will require more modifications\* than the others.  Let's start
-with the dependencies section:
+Having [already made the leap to F#](./tres.html), we will now do our Hello World in Freya.  Thanks to the hard work of
+Microsoft on .NET Core 2, this process exactly mirrors what we did with Tres, just with a Freya dependency instead of
+one for Nancy:
 
     [lang=text]
-    "dependencies": {
-      "Freya": "3.0.0-rc01",
-      "Microsoft.AspNetCore.Owin": "1.0.0",
-      "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
-      "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
-    },
+    <ItemGroup>
+      <PackageReference Include="Freya" Version="4.0.0-alpha-*" IncludePrerelease="true" />
+      <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
+      <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
+    </ItemGroup>
 
-Freya should be self-explanatory, and we've seen the Owin and Kestrel imports before.  The new one is the last one, and
-this package provides fill-ins for some types that used to be defined in `mscorlib` (the big library-to-rule-them-all
-that went away between the full .NET framework and .NET Core).
-
-The frameworks sections needs some attention as well:
+We'll go ahead and rename `Program.fs` to `App.fs` to remain consistent among the projects, and tell the compiler about
+it:
 
     [lang=text]
-    "frameworks": {
-      "netcoreapp1.0": {
-        "dependencies": {
-          "Microsoft.NETCore.App": {
-            "type": "platform",
-            "version": "1.0.1"
-          },
-          "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-160831"
-        },
-        "imports": [
-          "portable-net45+win8+dnxcore50",
-          "portable-net45+win8",
-          "net452",
-          "dnxcore50"
-        ]
-      }
-    },
+    <ItemGroup>
+      <Compile Include="App.fs" />
+    </ItemGroup>
 
-These imports allow us to use some Freya dependencies that target Portable Class Libraries (PCLs) that are supported by
-.NET Core.  Finally, while we're there, change "Program.fs" to "App.fs" in the compiled file list, as we'll rename
-`Program.fs` to `App.fs` to remain consistent among the projects.
-
-Now, for `App.fs`:
+Now, let's actually write `App.fs`:
 *)
 namespace Quatro
 
@@ -112,10 +88,4 @@ has become; the only place we had to `ignore` anything was the "seam" where we i
 `dotnet run` should succeed at this point, and localhost:5000 should display our Hello World message.
 
 [Back to Step 1](../step1)
-
----
-
-\* - Huge props go to @neoeinstein for documenting these settings in
-[this Gist](https://gist.github.com/neoeinstein/66c2c8ace158b3e701e206e172e91f8b).  I had not seen the PCL compat
-package _or_ an import for "net452" in .NET Core before this.
 *)

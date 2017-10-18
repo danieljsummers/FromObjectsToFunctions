@@ -1,14 +1,14 @@
 ### Dos - Step 3
 
-This step will follow the same general path as [Uno](uno.html), but we'll also iterate on what we made there to bring
+This step will follow the same general path as [Uno](./uno.html), but we'll also iterate on what we made there to bring
 some of the code into a more functional style.
 
-#### `project.json` Changes
+#### `Dos.csproj` Changes
 
-We only need to add the RethinkDB package to what we had at the end of step 2 (under `dependencies`):
+We only need to add the RethinkDB package to what we had at the end of step 2 (in the dependency `ItemGroup`):
 
     [lang=text]
-    "RethinkDb.Driver": "2.3.15"
+    <PackageReference Include="RethinkDb.Driver" Version="2.*" />
 
 Run `dotnet restore` to pull in that dependency.  Also, we'll bring across the entire `Data` directory we created in
 **Uno** during this step.  We'll be able to use `Table.cs` and `EnvironmentExtensions.cs` as is (except for changing
