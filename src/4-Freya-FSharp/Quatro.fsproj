@@ -8,15 +8,24 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <Compile Include="Extensions.fs" />
+    <Compile Include="Dependencies.fs" />
     <Compile Include="Entities.fs" />
+    <Compile Include="Data.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="data-config.json" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Chiron" Version="7.0.0-alpha-*" IncludePrerelease="true" />
     <PackageReference Include="Freya" Version="4.0.0-alpha-*" IncludePrerelease="true" />
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
     <PackageReference Include="Newtonsoft.Json" Version="10.*" />
+    <PackageReference Include="RethinkDb.Driver" Version="2.*" />
   </ItemGroup>
 
 </Project>

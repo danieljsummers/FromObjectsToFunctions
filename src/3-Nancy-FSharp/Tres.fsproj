@@ -8,9 +8,15 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <Compile Include="Extensions.fs" />
     <Compile Include="Entities.fs" />
+    <Compile Include="Data.fs" />
     <Compile Include="HomeModule.fs" />
     <Compile Include="App.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="data-config.json" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +24,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
     <PackageReference Include="Nancy" Version="2.0.0-*" IncludePrerelease="true" />
     <PackageReference Include="Newtonsoft.Json" Version="10.*" />
+    <PackageReference Include="RethinkDb.Driver" Version="2.*" />
   </ItemGroup>
 
 </Project>
