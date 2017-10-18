@@ -2,7 +2,6 @@ namespace Quatro
 
 open Chiron
 open RethinkDb.Driver
-open RethinkDb.Driver.Ast
 open RethinkDb.Driver.Net
 open System
 
@@ -52,7 +51,6 @@ with
         { Parameters = options }
     | _ -> { Parameters = [] }
 
-
 [<RequireQualifiedAccess>]
 module Table =
   let Category = "Category"
@@ -61,6 +59,8 @@ module Table =
   let Post = "Post"
   let User = "User"
   let WebLog = "WebLog"
+
+open RethinkDb.Driver.Ast
 
 [<RequireQualifiedAccess>]
 module Data =
