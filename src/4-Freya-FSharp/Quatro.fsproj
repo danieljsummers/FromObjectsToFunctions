@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Chiron" Version="7.0.0-alpha-*" IncludePrerelease="true" />
+    <PackageReference Include="Chiron" Version="6.3.0-*" IncludePrerelease="true" />
     <PackageReference Include="Freya" Version="4.0.0-alpha-*" IncludePrerelease="true" />
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
