@@ -1,5 +1,8 @@
 # objects () |> functions
 
+_**NOTE:** Once tooling has finalized around .NET Standard 2, I will be bringing the currently done steps up to
+current, then continue._
+
 ## What
 
 This repository will track the development of a rudimentary multi-site blog platform, in parallel, in 4 different
@@ -36,4 +39,4 @@ _This learning is not my primary occupation, so the pace may be slow; my hope is
 ## The Steps
 
 The plan is laid out, and will be documented as we go along, on
-[the wiki](https://github.com/danieljsummers/FromObjectsToFunctions/wiki).
+[GitHub Pages](https://danieljsummers.github.io/FromObjectsToFunctions/).

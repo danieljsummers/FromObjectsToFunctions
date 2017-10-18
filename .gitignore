@@ -251,5 +251,5 @@ paket-files/
 .idea/
 *.sln.iml
 
-# Documents
-dox/output
+# Documentation output
+dox/output/
