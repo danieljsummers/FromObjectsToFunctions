@@ -1,7 +1,7 @@
-﻿namespace Uno
-{
-    using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 
+namespace Uno
+{
     public class App
     {
         public static void Main(string[] args)

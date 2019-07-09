@@ -1,7 +1,7 @@
-﻿namespace Dos
-{
-    using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 
+namespace Dos
+{
     public class App
     {
         public static void Main(string[] args)

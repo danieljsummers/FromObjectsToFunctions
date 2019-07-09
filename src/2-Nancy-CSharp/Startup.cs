@@ -1,12 +1,11 @@
+using Microsoft.AspNetCore.Builder;
+using Nancy.Owin;
+
 namespace Dos
 {
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Nancy.Owin;
-
     public class Startup
     {
         public void Configure(IApplicationBuilder app) =>
-            app.UseOwin(x => x.UseNancy(options => options.Bootstrapper = new DosBootstrapper()));
+            app.UseOwin(x => x.UseNancy());
     }
 }

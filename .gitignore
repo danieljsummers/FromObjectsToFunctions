@@ -251,5 +251,8 @@ paket-files/
 .idea/
 *.sln.iml
 
+# Ionide extension
+.ionide
+
 # Documentation output
 dox/output/
