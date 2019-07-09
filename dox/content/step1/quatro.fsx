@@ -1,13 +1,14 @@
 (*** hide ***)
-#r "../../../packages/Freya.Core/lib/net452/Freya.Core.dll"
-#r "../../../packages/Freya.Machines.Http/lib/net452/Freya.Machines.Http.dll"
-#r "../../../packages/Freya.Routers.Uri.Template/lib/net452/Freya.Routers.Uri.Template.dll"
-#r "../../../packages/Freya.Types.Uri.Template/lib/net452/Freya.Types.Uri.Template.dll"
-#r "../../../packages/Microsoft.AspNetCore.Hosting/lib/net451/Microsoft.AspNetCore.Hosting.dll"
-#r "../../../packages/Microsoft.AspNetCore.Hosting.Abstractions/lib/net451/Microsoft.AspNetCore.Hosting.Abstractions.dll"
-#r "../../../packages/Microsoft.AspNetCore.Http.Abstractions/lib/net451/Microsoft.AspNetCore.Http.Abstractions.dll"
-#r "../../../packages/Microsoft.AspNetCore.Owin/lib/net451/Microsoft.AspNetCore.Owin.dll"
-#r "../../../packages/Microsoft.AspNetCore.Server.Kestrel/lib/net451/Microsoft.AspNetCore.Server.Kestrel.dll"
+#r "netstandard.dll"
+#r "../../../packages/Freya.Core/lib/netstandard2.0/Freya.Core.dll"
+#r "../../../packages/Freya.Machines.Http/lib/netstandard2.0/Freya.Machines.Http.dll"
+#r "../../../packages/Freya.Routers.Uri.Template/lib/netstandard2.0/Freya.Routers.Uri.Template.dll"
+#r "../../../packages/Freya.Types.Uri.Template/lib/netstandard2.0/Freya.Types.Uri.Template.dll"
+#r "../../../packages/Microsoft.AspNetCore.Hosting/lib/netstandard2.0/Microsoft.AspNetCore.Hosting.dll"
+#r "../../../packages/Microsoft.AspNetCore.Hosting.Abstractions/lib/netstandard2.0/Microsoft.AspNetCore.Hosting.Abstractions.dll"
+#r "../../../packages/Microsoft.AspNetCore.Http.Abstractions/lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll"
+#r "../../../packages/Microsoft.AspNetCore.Owin/lib/netstandard2.0/Microsoft.AspNetCore.Owin.dll"
+#r "../../../packages/Microsoft.AspNetCore.Server.Kestrel/lib/netstandard2.0/Microsoft.AspNetCore.Server.Kestrel.dll"
 
 (**
 ### Quatro - Step 1
@@ -18,7 +19,7 @@ one for Nancy:
 
     [lang=text]
     <ItemGroup>
-      <PackageReference Include="Freya" Version="4.0.0-alpha-*" IncludePrerelease="true" />
+      <PackageReference Include="Freya" Version="4.*" />
       <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
       <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
     </ItemGroup>
@@ -49,6 +50,7 @@ HTTP machine to a URL route pattern.
 Continuing on...
 *)
 module App =
+  
   let hello =
     freya {
       return Represent.text "Hello World from Freya"
@@ -71,7 +73,7 @@ Still within `module App =`...
 *)
   type Startup () =
     member __.Configure (app : IApplicationBuilder) =
-      let freyaOwin = OwinMidFunc.ofFreya (UriTemplateRouter.Freya router)
+      let freyaOwin = OwinMidFunc.ofFreya router
       app.UseOwin (fun p -> p.Invoke freyaOwin) |> ignore
 
   [<EntryPoint>]

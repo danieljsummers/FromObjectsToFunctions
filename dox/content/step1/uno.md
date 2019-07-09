@@ -10,9 +10,9 @@ To start, we'll make sure the `.csproj` file is named `Uno.csproj`. Then, under 
     [lang=text]
     <PropertyGroup>
       <AssemblyName>Uno</AssemblyName>
-      <VersionPrefix>1.0.0</VersionPrefix>
+      <VersionPrefix>2.0.0</VersionPrefix>
       <OutputType>Exe</OutputType>
-      <TargetFramework>netcoreapp2.0</TargetFramework>
+      <TargetFramework>netcoreapp2.2</TargetFramework>
     </PropertyGroup>
 
 Then, we'll add a new section, `ItemGroup`, and two dependencies:

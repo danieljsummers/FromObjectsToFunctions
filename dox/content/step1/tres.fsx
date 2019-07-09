@@ -1,10 +1,10 @@
 (*** hide ***)
-#r "../../../packages/Nancy/lib/net452/Nancy.dll"
-#r "../../../packages/Microsoft.AspNetCore.Hosting/lib/net451/Microsoft.AspNetCore.Hosting.dll"
-#r "../../../packages/Microsoft.AspNetCore.Hosting.Abstractions/lib/net451/Microsoft.AspNetCore.Hosting.Abstractions.dll"
-#r "../../../packages/Microsoft.AspNetCore.Http.Abstractions/lib/net451/Microsoft.AspNetCore.Http.Abstractions.dll"
-#r "../../../packages/Microsoft.AspNetCore.Owin/lib/net451/Microsoft.AspNetCore.Owin.dll"
-#r "../../../packages/Microsoft.AspNetCore.Server.Kestrel/lib/net451/Microsoft.AspNetCore.Server.Kestrel.dll"
+#r "../../../packages/Nancy/lib/netstandard2.0/Nancy.dll"
+#r "../../../packages/Microsoft.AspNetCore.Hosting/lib/netstandard2.0/Microsoft.AspNetCore.Hosting.dll"
+#r "../../../packages/Microsoft.AspNetCore.Hosting.Abstractions/lib/netstandard2.0/Microsoft.AspNetCore.Hosting.Abstractions.dll"
+#r "../../../packages/Microsoft.AspNetCore.Http.Abstractions/lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll"
+#r "../../../packages/Microsoft.AspNetCore.Owin/lib/netstandard2.0/Microsoft.AspNetCore.Owin.dll"
+#r "../../../packages/Microsoft.AspNetCore.Server.Kestrel/lib/netstandard2.0/Microsoft.AspNetCore.Server.Kestrel.dll"
 
 (**
 ### Tres - Step 1
@@ -46,11 +46,10 @@ namespace Tres
 
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
-open Nancy
 open Nancy.Owin
 
 type Startup() =
-  member this.Configure (app : IApplicationBuilder) =
+  member __.Configure (app : IApplicationBuilder) =
     app.UseOwin (fun x -> x.UseNancy (fun x -> ()) |> ignore) |> ignore
 
 module App = 

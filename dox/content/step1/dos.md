@@ -5,15 +5,15 @@ For this project, we'll make sure our project file is `Dos.csproj`, and modify i
     [lang=text]
     <PropertyGroup>
       <AssemblyName>Dos</AssemblyName>
-      <VersionPrefix>1.0.0</VersionPrefix>
+      <VersionPrefix>2.0.0</VersionPrefix>
       <OutputType>Exe</OutputType>
-      <TargetFramework>netcoreapp2.0</TargetFramework>
+      <TargetFramework>netcoreapp2.2</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
       <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
-      <PackageReference Include="Nancy" Version="2.0.0-*" IncludePrerelease="true" />
+      <PackageReference Include="Nancy" Version="2.*" />
     </ItemGroup>
 
 Nancy strives to provide a Super-Duper-Happy-Path (SDHP), where all you have to do is follow their conventions, and everything will "just work."  (You can also configure every aspect of it; it's only opinionated in its defaults.)  One of these conventions is that the controllers inherit from `NancyModule`, and when they do, no further configuration is required.  So, we create the `Modules` directory, and add `HomeModule.cs`, which looks like this:
