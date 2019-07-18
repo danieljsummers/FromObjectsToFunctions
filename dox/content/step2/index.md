@@ -1,7 +1,7 @@
 ### Data Model
 
 _(Feel free to browse
-[the checkpoint for step 2](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-2-core2) as you follow
+[the checkpoint for step 2](https://github.com/danieljsummers/FromObjectsToFunctions/tree/v2-step-2) as you follow
 along.)_
 
 #### Overview
@@ -40,7 +40,7 @@ easily see how this model could be represented in a relational database.
 
 Some other design decisions:
 
-- We will use strings (created from `Guid`s) as our Ids for entities
+- We will use strings (created from `Guid`s) as our Ids for entities, and all of documents will have `Id` as the property _(this supports the convention RavenDB uses to identify document identifiers)_
 - Authorization levels, post statuses, and comment statuses are represented as strings, but we provide a means to avoid magic strings in the code while dealing with these
 - Properties representing date/time will be stored as `long`/`int64`, representing ticks. _(We'll use NodaTime for manipulation, but this would also support using something built-in like `DateTime.UtcNow.Ticks`.)_
 - While you generally want to properly comment all classes and public properties, we will exclude these for brevity's sake.
