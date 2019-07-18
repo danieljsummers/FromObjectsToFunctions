@@ -18,7 +18,7 @@ Having [already made the leap to F#](./tres.html), we will now do our Hello Worl
 Microsoft on .NET Core 2, this process exactly mirrors what we did with Tres, just with a Freya dependency instead of
 one for Nancy:
 
-    [lang=text]
+    [lang=xml]
     <ItemGroup>
       <PackageReference Include="Freya" Version="4.*" />
       <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
@@ -28,7 +28,7 @@ one for Nancy:
 We'll go ahead and rename `Program.fs` to `App.fs` to remain consistent among the projects, and tell the compiler about
 it:
 
-    [lang=text]
+    [lang=xml]
     <ItemGroup>
       <Compile Include="App.fs" />
     </ItemGroup>

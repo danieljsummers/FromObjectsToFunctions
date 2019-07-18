@@ -2,7 +2,7 @@
 
 For this project, we'll make sure our project file is `Dos.csproj`, and modify it the way we did [for Uno](./uno.html); we'll include one extra dependency to bring in Nancy.
 
-    [lang=text]
+    [lang=xml]
     <PropertyGroup>
       <AssemblyName>Dos</AssemblyName>
       <VersionPrefix>2.0.0</VersionPrefix>

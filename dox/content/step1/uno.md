@@ -1,13 +1,10 @@
 ### Uno - Step 1
 
-_NOTE: While there is a "web" target for C#, it pulls in a lot of files that I'd rather not go through and explain.  We
-will not be using Entity Framework for anything, and though this application will use some of the Identity features of
-ASP.NET Core MVC, we will not be using its membership features.  Since all of that is out of scope for this effort, and
-all of this is in the "web" template, we won't use it._  😃
+_NOTE: While there is a "web" target for C#, it pulls in a lot of files that I'd rather not go through and explain. We will not be using Entity Framework for anything, and though this application will use some of the Identity features of ASP.NET Core MVC, we will not be using its membership features.  Since all of that is out of scope for this effort, and all of this is in the "web" template, we won't use it._  😃
 
 To start, we'll make sure the `.csproj` file is named `Uno.csproj`. Then, under the first `PropertyGroup` item, we'll add a few items; when we're done, it should look like this:
 
-    [lang=text]
+    [lang=xml]
     <PropertyGroup>
       <AssemblyName>Uno</AssemblyName>
       <VersionPrefix>2.0.0</VersionPrefix>
@@ -17,7 +14,7 @@ To start, we'll make sure the `.csproj` file is named `Uno.csproj`. Then, under 
 
 Then, we'll add a new section, `ItemGroup`, and two dependencies:
 
-    [lang=text]
+    [lang=xml]
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
       <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />

@@ -76,7 +76,7 @@ At this point, `dotnet build` will fail.  I mentioned compilation order earlier;
 other, but we have yet to tell the compiler about them, or how they should be ordered.  Back in `Tres.fsproj`, between
 the `PropertyGroup` and the `ItemGroup`, add the following `ItemGroup`:
 
-    [lang=text]
+    [lang=xml]
     <ItemGroup>
       <Compile Include="HomeModule.fs" />
       <Compile Include="App.fs" />
