@@ -7,8 +7,8 @@ type Revision =
     }
 with
   static member Empty =
-    { AsOf       = 0L
-      Text       = ""
+    { AsOf = 0L
+      Text = ""
       }
 (**
 ### Quatro - Step 2

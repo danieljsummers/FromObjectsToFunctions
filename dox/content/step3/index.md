@@ -1,48 +1,23 @@
-## RethinkDB Connection
+## RavenDB Connection
 
-Database connections are generally defined at either the application or request instance levels.  The
-[C# RethinkDB driver](https://github.com/bchavez/RethinkDb.Driver) is designed for the former, and configuring it as a
-singleton is the recommended implementation.  We will do that for our application.  In the process of ensuring that we
-can properly configure this instance, we will also have to address the concepts of configuration and dependency
-injection (or, in the case of our Freya implementation, its replacement).  You can review the all the code at
-[the checkpoint for step 3](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-3-core2).
+Database connections are generally defined at either the application or request instance levels.  The [RavenDB client](https://github.com/ravendb/ravendb/tree/v4.2/src/Raven.Client) is designed for the former, and configuring its `IDocumentStore` type as a singleton is the recommended implementation, which we will do for our applications. In the process of ensuring that we can properly configure this instance, we will also have to address the concepts of configuration and dependency injection (or, in the case of our Freya implementation, its replacement). You can review the all the code at [the checkpoint for step 3](https://github.com/danieljsummers/FromObjectsToFunctions/tree/v2-step-3).
 
-### A Bit about RethinkDB
+### A Bit about RavenDB
 
-RethinkDB is a document database, and the C# implementation allows us to represent our documents as Plain Old CLR
-Objects (AKA POCOs).  It uses JSON.Net to serialize POCOs into JSON documents, which are then stored by the server.
-It exposes collections of documents as "databases" and "tables" within each database, mirroring its relational database
-cousins.  However, there are no schemas for tables, and a table can have documents of varying formats.  Each table can
-have one or more indexes that can be used to retrieve documents without scanning the entire table.  It provides its own
-query language (ReQL) that utilizes a fluent interface, where queries begin with an `R.` or `r.` and end in a `Run*`
-statement.
+[RavenDB](https://ravendb.net/) is a document database written in C# that allows the us to store our Plain Old CLR Objects (AKA POCOs) as documents. It uses JSON.Net to serialize POCOs into JSON documents, which are then stored by the server. It stores data in "databases", with documents grouped together in "collections" based on their Id. There are no schemas for these documents, or within a collection; however, in practice, most documents in a collection will have a similar shape. Documents can be indexed, to allow fast retrieval or even alternate forms of the data. It provides its own query language (RQL), based on Lucene, and also exposes most all its features in LINQ syntax off the document collection.
 
-It has other features, such as server clustering and change feeds, but these will not be part of our project (although
-change feeds could be an interesting Step n-2 project for post comments).  We will use a single instance of RethinkDB,
-and a single database within it, for all our data.
+It also supports multi-node clusters, and a lot of advanced features we won't be tapping for this project. We will use a single instance of RavenDB, and a single database within it, for all our data. RavenDB will run for seven days without a license installed, but they offer free developer and community licenses at their site.
 
 ### All Implementations
 
 Each of our implementations will allow for the following user-configurable options:
 
-- `Hostname` - The hostname for the server; defaults to "localhost"
-- `Port` - The port to use to connect to the server; defaults to 28015
-- `Database` - The default database to use for queries that do not specify a database; defaults to "test"
-- `AuthKey` - The authorization key to provide for the connection; defaults to "" (empty)
-- `Timeout` - How long to wait when connecting; defaults to 20
+- `Url` - The URL and port of the RavenDB server
+- `Database` - The database to use for queries, so that we do not need to specify one for each call
 
-Additionally, we will write start-up code that ensures our requisite tables exist, and that each of these tables has
-the appropriate indexes.  To hold our documents, we will create the following tables:
+_(If you decide to go live with this, you'll end up generating a client certificate and at least a community license; we'll address this at the end of the project.)_
 
-- Category
-- Comment
-- Page
-- Post
-- User
-- WebLog
-
-We will be able to retrieve individual documents by Id without any further definition.  Additionally, we will create
-indexes to support the following scenarios:
+Additionally, we will write start-up code that ensures our document collections are properly indexed. A collection does not have to "exist" before defining an index, so we can create the indexes on a database without any documents. We will create the appropriate database through the Raven Studio rather than through code, so that we can set it as the default when we initialize our `IDocumentStore` instance. We do not need to create indexes to be able to retrieve individual documents by Id; we will, though, need to address the following scenarios:
 
 - Category retrieval by web log Id _(used to generate lists of available categories)_
 - Category retrieval by web log Id and slug _(used to retrieve details for category archive pages)_
@@ -56,8 +31,7 @@ indexes to support the following scenarios:
 
 ### Individual Implementations
 
-Each of these not only evolves from step 2 to step 3, they also evolve as Uno moves to Quatro.  It may help
-understanding to read each of them, even if your interest is just in one of them.
+Each of these not only evolves from step 2 to step 3, they also evolve as Uno moves to Quatro.  It may help understanding to read each of them, even if your interest is just in one of them.
 
 **Uno** - [In Depth](uno.html)
 

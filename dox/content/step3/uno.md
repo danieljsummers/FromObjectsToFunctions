@@ -1,97 +1,99 @@
 ### Uno - Step 3
 
-Our implementation here will fall into two broad categories - defining the configurable connection and table/index
-checking code that we can run at startup, and configuring ASP.NET Core's DI container to wire it all up.  Before we get
-to that, though, we need to add a few packages to `Uno.csproj` (under the dependency `ItemGroup`) for this step.
+Our implementation here will fall into two broad categories - configuring the connection and adding it to the ASP.NET Core's DI container, then adding the indexing code. Before we get to that, though, we need to add a few packages to `Uno.csproj` (under the dependency `ItemGroup`) for this step.
 
-    [lang=text]
+    [lang=xml]
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.*" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.*" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.*" />
-    <PackageReference Include="RethinkDb.Driver" Version="2.*" />
+    <PackageReference Include="RavenDb.Client" Version="4.*" />
 
-#### Configurable Connection
+#### Create the Database
 
-Our application will need an instance of RethinkDB's `IConnection` to utilize.  To support our configuration options,
-we will make a POCO called `DataConfig`, under a new `Data` directory in our project, and also give it an instance
-method to create the connection with the current values.
+If you run RavenDB in interactive mode, it should launch a browser with RavenDB Studio; if you have it running as a service on your local machine, go to http://localhost:8082. Using the studio, create a database called "O2F1".
+
+#### Configuring the Connection and Adding to DI
+
+We will store our connection settings with the other configuration for the application. The standard .NET Core name for such a file is `appsettings.json`, so we create one with the following values:
+
+    [lang=json]
+    {
+      "RavenDB": {
+        "Url": "http://localhost:8082",
+        "Database": "O2F1"
+      }
+    }
+
+When we were doing our quick-and-dirty "Hello World" in step 1, we had very minimal content in `Startup.cs`.  Now, we'll flesh that out a little more.
 
     [lang=csharp]
-    namespace Uno.Data
+    [add]
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Raven.Client.Documents;
+    [/add]
+    
+    public class Startup
     {
-        using RethinkDb.Driver;
-        using RethinkDb.Driver.Net;
+        public static IConfigurationRoot Configuration { get; private set; }
         
-        public class DataConfig
+        public Startup(IHostingEnvironment env)
         {
-            public string Hostname { get; set; }
-            
-            public int Port { get; set; }
-            
-            public string AuthKey { get; set; }
-            
-            public int Timeout { get; set; }
-            
-            public string Database { get; set; }
-            
-            public IConnection CreateConnection()
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
+        }
+        
+        public void ConfigureServices(IServiceCollection services)
+        {
+            var cfg = Configuration.GetSection("RavenDB");
+            var store = new DocumentStore
             {
-                var conn = RethinkDB.R.Connection();
-                
-                if (null != Hostname) { conn = conn.Hostname(Hostname); }
-                if (0 != Port) { conn = conn.Port(Port); }
-                if (null != AuthKey) { conn = conn.AuthKey(AuthKey); }
-                if (null != Database) { conn = conn.Db(Database); }
-                if (0 != Timeout) { conn = conn.Timeout(Timeout); }
-                
-                return conn.Connect();
+                Urls = new[] { cfg["Url"] },
+                Database = cfg["Database"]
+            };
+            services.AddSingleton(store.Initialize());
+        }
+
+This does the following:
+
+- In the constructor, creates a configuration tree that is a union of `appsettings.json`, `appsettings.{environment}.json`, and environment variables (each of those overriding the prior one if settings are specified in both)
+- In `ConfigureServices`, gets the `RavenDB` configuration sections, uses it to configure the `DocumentStore` instance, and registers the output of its `Initialize` method as the `IDocumentStore` singleton in the DI container.
+
+We'll come back to this file, but we need to write some more code first.
+
+#### Defining Collections
+
+RavenDB creates document collection names using the plural of the name of the type being stored - ex., a `Post` would go in the `Posts` collection. Its Ids also follow the form `[collection]/[id]`, so post 123 would have the document Id `Posts/123`.  `Data/Collection.cs` contains C# constants we will use to reference our collections. It also contains two utility methods: one for creating a document Id from a collection name and a `Guid`, and the other for deriving the collection name and Id from a document Id.
+
+#### Ensuring Indexes Exist
+
+RavenDB provides a means of creating strongly-typed indexes as classes that extend `AbstractIndexCreationTask<T>`; these definitions can be used to both define and query indexes. We will create these in the `Uno.Data.Indexes` namespace. You can [review all the files there](https://github.com/danieljsummers/FromObjectsToFunctions/tree/v2-step-3/src/1-AspNetCore-CSharp/Data/Indexes/), but we'll look at one example here.
+
+The naming convention for indexes within RavenDB is `[collection]/By[field]`. The index description below defines an index that allows us to query categories by web log Id.
+
+    [lang=csharp]
+    using Raven.Client.Documents.Indexes;
+    using System.Linq;
+    using Uno.Entities;
+
+    namespace Uno.Data.Indexes
+    {
+        public class Categories_ByWebLogId : AbstractIndexCreationTask<Category>
+        {
+            public Categories_ByWebLogId()
+            {
+                Map = categories => from category in categories select category.WebLogId;
             }
         }
     }
 
-Note that the connection builder uses a fluent interface.  We just as well could have chained all of these together,
-using defaults where we had no data, like so:
+**TODO** stopped here
 
-    [lang=csharp]
-    RethinkDB.R.Connection()
-        .Hostname(Hostname ?? RethinkDBConstants.DefaultHostname)
-        .Port(0 == Port ? RethinkDBConstants.DefaultPort : Port)
-        ...etc...
-        .Connect();
-
-We could then actually define this as a fat-arrow (`=>`) function and omit the return.  If C# were our final
-destination, that's a fine implementation; of course, it's not, and I've structured it this way to illustrate that we
-really only have to call the configuration methods for properties that we've specified in our JSON file.
-
-Note also that we are mutating the `conn` variable with the result of each builder call.  Do we need to do this?  I
-have no idea; if the C# driver is (under the hood) mutating itself, we don't; if it's returning a new version of the
-builder with a change made (the F#/immutable way of doing things), we do.  I certainly could find out _(yay, open
-source!)_, but it's an implementation detail we don't need to know.  It's not wrong to do it this way, and in future
-implementations, we will be accomplishing the same thing without using mutation - at least in our code.
-
-#### Tables
-
-RethinkDB uses the term "table" to represent a collection of documents.  Other document databases use the term
-"collection" or "document store"; this is the rough equivalent of a relational table.  Of course, the difference here
-is that the documents do not all have to conform to the same schema.  `Data/Table.cs` contains C# constants we will use
-to reference our tables.
-
-#### Ensuring Tables and Indexes Exist
-
-Many of the new APIs that are provided within .NET Core are implemented as extension methods on existing objects.
-Since `IConnection` represents our connection to RethinkDB, we'll target that type for our extension methods.  We
-create the `EnvironmentExtensions.cs` file under the `Data` directory, and define it as a `public static` class.
-
-In our overall plan for step 3, we defined several types of queries we want to be able to run against these tables.
-While RethinkDB will create a table the first time you try to store a document in it, we cannot define indexes against
-them in this scenario.  Indexes are the way RethinkDB avoids a complete table scan for documents; the concept is very
-similar to an index on a relational table.  Since we need to define these indexes before our application can use them,
-we'll need make sure the tables exist, so we can create indexes against them.
-
-We will not go line-by-line through `EnvironmentExtensions.cs`; it's rather straightforward, and simply ensures that
-the database, tables, and indexes exist.  It is our first exposure to the RethinkDB API, though, so be sure to
-[review the source](https://github.com/danieljsummers/FromObjectsToFunctions/tree/step-3-core2/src/1-AspNetCore-CSharp/Data/EnvironmentExtensions.cs)
-to ensure you get a sense of how data access is designed to work in the RethinkDB driver.
 
 #### Dependency Injection
 
