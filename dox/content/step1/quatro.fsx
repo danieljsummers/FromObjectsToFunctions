@@ -1,5 +1,5 @@
 (*** hide ***)
-#r "netstandard.dll"
+#r @"C:\Windows\Microsoft.NET\assembly\GAC_MSIL\netstandard\v4.0_2.0.0.0__cc7b13ffcd2ddd51\netstandard.dll"
 #r "../../../packages/Freya.Core/lib/netstandard2.0/Freya.Core.dll"
 #r "../../../packages/Freya.Machines.Http/lib/netstandard2.0/Freya.Machines.Http.dll"
 #r "../../../packages/Freya.Routers.Uri.Template/lib/netstandard2.0/Freya.Routers.Uri.Template.dll"
@@ -9,6 +9,7 @@
 #r "../../../packages/Microsoft.AspNetCore.Http.Abstractions/lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll"
 #r "../../../packages/Microsoft.AspNetCore.Owin/lib/netstandard2.0/Microsoft.AspNetCore.Owin.dll"
 #r "../../../packages/Microsoft.AspNetCore.Server.Kestrel/lib/netstandard2.0/Microsoft.AspNetCore.Server.Kestrel.dll"
+#r "../../../packages/Microsoft.AspNetCore.Server.Kestrel.Core/lib/netstandard2.0/Microsoft.AspNetCore.Server.Kestrel.Core.dll"
 
 (**
 ### Quatro - Step 1
