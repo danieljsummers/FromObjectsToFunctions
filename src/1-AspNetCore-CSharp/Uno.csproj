@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\" />
+  </ItemGroup>
+
 </Project>

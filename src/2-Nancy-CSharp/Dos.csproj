@@ -13,4 +13,8 @@
     <PackageReference Include="Nancy" Version="2.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\" />
+  </ItemGroup>
+
 </Project>

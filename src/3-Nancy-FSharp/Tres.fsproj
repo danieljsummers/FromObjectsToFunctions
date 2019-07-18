@@ -8,6 +8,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <Compile Include="Entities.fs" />
     <Compile Include="HomeModule.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
