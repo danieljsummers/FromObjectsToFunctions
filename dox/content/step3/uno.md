@@ -10,7 +10,7 @@ Our implementation here will fall into two broad categories - configuring the co
 
 #### Create the Database
 
-If you run RavenDB in interactive mode, it should launch a browser with RavenDB Studio; if you have it running as a service on your local machine, go to http://localhost:8082. Using the studio, create a database called "O2F1".
+If you run RavenDB in interactive mode, it should launch a browser with RavenDB Studio; if you have it running as a service on your local machine, go to http://localhost:8080. Using the studio, create a database called "O2F1".
 
 #### Configuring the Connection and Adding to DI
 
@@ -19,7 +19,7 @@ We will store our connection settings with the other configuration for the appli
     [lang=json]
     {
       "RavenDB": {
-        "Url": "http://localhost:8082",
+        "Url": "http://localhost:8080",
         "Database": "O2F1"
       }
     }
@@ -74,7 +74,7 @@ RavenDB creates document collection names using the plural of the name of the ty
 
 RavenDB provides a means of creating strongly-typed indexes as classes that extend `AbstractIndexCreationTask<T>`; these definitions can be used to both define and query indexes. We will create these in the `Uno.Data.Indexes` namespace. You can [review all the files there](https://github.com/danieljsummers/FromObjectsToFunctions/tree/v2-step-3/src/1-AspNetCore-CSharp/Data/Indexes/), but we'll look at one example here.
 
-The naming convention for indexes within RavenDB is `[collection]/By[field]`. The index description below defines an index that allows us to query categories by web log Id.
+The naming convention for indexes within RavenDB is `[collection]/By[field]`. The index description below defines an index that allows us to query categories by web log Id and slug.
 
     [lang=csharp]
     using Raven.Client.Documents.Indexes;
@@ -83,85 +83,32 @@ The naming convention for indexes within RavenDB is `[collection]/By[field]`. Th
 
     namespace Uno.Data.Indexes
     {
-        public class Categories_ByWebLogId : AbstractIndexCreationTask<Category>
+        public class Categories_ByWebLogIdAndSlug : AbstractIndexCreationTask<Category>
         {
-            public Categories_ByWebLogId()
+            public Categories_ByWebLogIdAndSlug()
             {
-                Map = categories => from category in categories select category.WebLogId;
+                Map = categories => from category in categories
+                                    select new
+                                    {
+                                        category.WebLogId,
+                                        category.Slug
+                                    };
             }
         }
     }
 
-**TODO** stopped here
-
-
-#### Dependency Injection
-
-Now that we have defined our connection, and a method to make sure we have the data environment we need, we need a
-connection.  `appsettings.json` is the standard .NET Core name for the configuration file, so we create one with the
-following values:
-
-    [lang=text]
-    {
-      "RethinkDB": {
-        "Hostname": "my-rethinkdb-server",
-        "Database": "O2F1"
-      }
-    }
-
-The database name, here `O2F1`, will be different in each of our examples; this way, we can verify that each of our
-instances created the tables and indexes correctly.
-
-When we were doing our quick-and-dirty "Hello World" in step 1, we had very minimal content in `Startup.cs`.  Now,
-we'll flesh that out a little more.
+Now, let's revisit `Startup.cs`. The RavenDB client has a nice feature where it will scan assemblies for these indexes, and automatically create them. We'll use the name of this index to accomplish the registration.
 
     [lang=csharp]
     [add]
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Options;
-    using Uno.Data;
+    using Raven.Client.Documents.Indexes;
+    using Uno.Data.Indexes;
     [/add]
-    
-    public class Startup
-    {
-        public static IConfigurationRoot Configuration { get; private set; }
-        
-        public Startup(IHostingEnvironment env)
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
-        }
-        
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddOptions();
-            services.Configure<DataConfig>(Configuration.GetSection("RethinkDB"));
-            
-            var cfg = services.BuildServiceProvider().GetService<IOptions<DataConfig>>().Value;
-            var conn = cfg.CreateConnection();
-            conn.EstablishEnvironment(cfg.Database).GetAwaiter().GetResult();
-            services.AddSingleton(conn);
-        }
 
-This does the following:
+    [in ConfigureServices(), after the call to .AddSingleton()]
+        IndexCreation.CreateIndexes(typeof(Categories_ByWebLogIdAndSlug).Assembly, store);
+    [/end]
 
-- Creates a configuration tree that is a union of `appsettings.json`, `appsettings.{environment}.json`, and environment
-variables (each of those overriding the prior one if settings are specified in both)
-- Establishes the new `Options` API, registers our `DataConfig` as an option set, and specifies that it should be
-obtained from the `RethinkDB` section of the configuration
-- Creates a connection based on our configuration
-- Runs the `EstablishEnvironment` extension method, so that when we're done, we have the tables and indexes we expect
-_(since it's an `async` method, we use the `.GetAwaiter().GetResult()` chain so we don't have to define
-`ConfigureServices` as `async`)_
-- Registers our `IConnection` for injection
-
-Now, if we build and run our application, then use RethinkDB's administration site to look at our server, we should now
-see an `O2F1` database created, along with our tables and indexes.
+Now, if we build and run our application, then use RavenDB studio to look at the indexes for the `O2F1` database, we should be able to see the indexes we specified.
 
 [Back to Step 3](../step3)

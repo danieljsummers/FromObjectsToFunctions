@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Indexes;
+using Uno.Data.Indexes;
 
 namespace Uno
 {
@@ -30,6 +32,7 @@ namespace Uno
                 Database = cfg["Database"]
             };
             services.AddSingleton(store.Initialize());
+            IndexCreation.CreateIndexes(typeof(Categories_ByWebLogIdAndSlug).Assembly, store);
         }
 
         public void Configure(IApplicationBuilder app) =>

@@ -8,8 +8,8 @@ Establish a web request response with the least possible / complex code
 **[Step 2](step2)** - Data Model  
 Create the persistent types we'll use for our application
 
-**[Step 3](step3)** - RethinkDB Connection  
-Configure and prepare a RethinkDB connection for use in our application
+**[Step 3](step3)** - RavenDB Connection and Indexes
+Configure and prepare a RavenDB connection for use in our application
 
 **Step 4** - Framework Setup  
 Create folders / conventions for our application and load some dummy data
