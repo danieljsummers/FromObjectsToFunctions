@@ -11,10 +11,18 @@
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
     <PackageReference Include="Nancy" Version="2.*" />
+    <PackageReference Include="RavenDb.Client" Version="4.*" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\Indexes\" />
     <Folder Include="Entities\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="data-config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
