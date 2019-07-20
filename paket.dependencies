@@ -1,3 +1,4 @@
+source https://api.nuget.org/v3/index.json
 source https://nuget.org/api/v2
 
 nuget FSharp.Core redirects: force
@@ -9,4 +10,4 @@ nuget FSharp.Formatting
 nuget Microsoft.AspNetCore.Owin
 nuget Microsoft.AspNetCore.Server.Kestrel
 nuget Nancy >= 2.0.0
-nuget RethinkDb.Driver
+nuget RavenDb.Client

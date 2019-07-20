@@ -9,14 +9,22 @@
   
   <ItemGroup>
     <Compile Include="Entities.fs" />
+    <Compile Include="Indexes.fs" />
+    <Compile Include="Data.fs" />
     <Compile Include="HomeModule.fs" />
     <Compile Include="App.fs" />
+    <Content Include="data-config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+  
+  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.*" />
     <PackageReference Include="Nancy" Version="2.*" />
+    <PackageReference Include="RavenDb.Client" Version="4.*" />
   </ItemGroup>
-
+  
 </Project>
