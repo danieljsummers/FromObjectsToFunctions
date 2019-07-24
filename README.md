@@ -1,5 +1,11 @@
 # objects () |> functions
 
+**UPDATE (July 2019)** - Development of version 2 is happening in a different repository; version 2 inserts a Giraffe solution as Quatro, and moves Freya to Cinco.
+
+Repository: https://github.com/bit-badger/o2f
+
+Website: https://objects-to-functions.bitbadger.solutions
+
 ## What
 
 This repository will track the development of a rudimentary multi-site blog platform, in parallel, in 4 different
